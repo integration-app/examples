@@ -17,10 +17,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Company } from '@/components/company-form'
 
 export default function Page() {
   const [token, setToken] = useState<string | null>(null)
-  const [companies, setCompanies] = useState([])
+  const [companies, setCompanies] = useState<Company[] | unknown>([])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -56,7 +57,7 @@ export default function Page() {
           </Dialog>
         </div>
         <IntegrationAppProvider token={token}>
-          <CompaniesTable companies={companies} />
+          <CompaniesTable />
         </IntegrationAppProvider>
       </>
     )

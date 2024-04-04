@@ -19,21 +19,16 @@ import {
 } from '@/components/ui/table'
 import Store from '@/lib/store'
 import { siteConfig } from '@/config/site'
+import { Company } from '@/components/company-form'
 
 const store = new Store('companies')
 
-interface Company {
-  name: string
-  domain: string
-  pushedInto: string[]
-}
-
-function deleteCompany(domain) {
-  store.deleteItem((i) => i.domain == domain)
+function deleteCompany(domain: string) {
+  store.deleteItem((i: any) => i.domain == domain)
 }
 
 export function CompaniesTable() {
-  const [companies, setCompanies] = useState([])
+  const [companies, setCompanies] = useState<any[]>([])
   const integrationApp = useIntegrationApp()
   const flowKey = siteConfig.scenarios.find(
     (i) => i.slug == window.location.pathname.split('/')[1],
@@ -43,7 +38,7 @@ export function CompaniesTable() {
 
   return (
     <>
-      {companies.length ? (
+      {companies?.length ? (
         <Table className='mt-4'>
           <TableHeader>
             <TableRow>

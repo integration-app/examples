@@ -53,7 +53,7 @@ function IntegrationsList() {
             return first.name < second.name ? -1 : 1
           })
           .map((integration, index) => (
-            <TooltipProvider>
+            <TooltipProvider key={index}>
               <Tooltip>
                 <TooltipTrigger>
                   <Link
@@ -61,7 +61,6 @@ function IntegrationsList() {
                       integrationApp.integration(integration.id).connect()
                     }
                     href={integration.key}
-                    key={index}
                   >
                     <Card>
                       <Logo

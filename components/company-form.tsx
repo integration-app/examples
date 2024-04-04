@@ -30,6 +30,12 @@ const formSchema = z.object({
     ),
 })
 
+export interface Company {
+  name: string
+  domain: string
+  pushedInto: string[]
+}
+
 export function CompanyForm() {
   const store = new Store('companies')
   // const [companies, setCompanies] = useState([])
