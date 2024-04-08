@@ -18,6 +18,19 @@ export const siteConfig = {
       disabled: false,
     },
   ],
+  seed: {
+    companies: [
+      { name: 'Microsoft Corporation', domain: 'microsoft.com', pushedInto: [] },
+      { name: 'Apple Inc.', domain: 'apple.com', pushedInto: [] },
+      { name: 'NVIDIA Corporation', domain: 'nvidia.com', pushedInto: [] },
+    ],
+    turtles: [
+      { name: 'Leonardo', badge_color: 'blue' },
+      { name: 'Raphael', badge_color: 'red' },
+      { name: 'Donatello', badge_color: 'purple' },
+      { name: 'Michelangelo', badge_color: 'orange' },
+    ],
+  },
   ogImage: 'https://tx.shadcn.com/og.jpg',
   links: {
     twitter: 'https://twitter.com/shadcn',

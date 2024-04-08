@@ -1,4 +1,5 @@
 import {
+  Eye,
   Blocks,
   Command,
   ArrowUpFromLine,
@@ -7,14 +8,17 @@ import {
   Settings,
   Trash,
   ScrollText,
+  Slash
 } from 'lucide-react'
 
 export const Icons = {
+  eye: Eye,
   logo: Blocks,
   spinner: Loader2,
   plus: Plus,
   push: ArrowUpFromLine,
   settings: Settings,
   script: ScrollText,
-  trash: Trash
+  trash: Trash,
+  slash: Slash
 }

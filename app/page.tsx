@@ -28,7 +28,7 @@ export default function Home() {
                 key={index}
                 name={item.name}
                 description={item.description}
-                link={item.disabled ? '#' : `/${item.slug}/connect`}
+                link={item.disabled ? '#' : `/${item.slug}`}
               />
             ))}
           </dl>

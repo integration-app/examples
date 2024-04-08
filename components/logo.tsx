@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 interface LogoProps {
@@ -10,9 +11,11 @@ interface LogoProps {
 export default function Logo(props: LogoProps) {
   return (
     <div>
-      <img
+      <Image
         src={props.src}
         alt={props.alt}
+        width={128}
+        height={128}
         className={cn('max-w-32 max-h-32', props.className)}
       />
     </div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import {
   useIntegrationApp,
   IntegrationAppProvider,
@@ -17,8 +18,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import Logo from '@/components/logo'
+import { siteConfig } from '@/config/site'
 
-export default function Page() {
+interface ConnectPageProps {
+  params: {
+    scenario: string
+  }
+}
+
+export default function ConnectPage({ params }: ConnectPageProps) {
   const [token, setToken] = useState<string | null>(null)
 
   useEffect(() => {
@@ -29,25 +37,29 @@ export default function Page() {
       setToken(token)
     }
   }, [])
+
+  if (!siteConfig.scenarios.map((i) => i.slug).includes(params.scenario)) {
+    redirect('/')
+  }
+
   if (token) {
     return (
       <IntegrationAppProvider token={token}>
-        <IntegrationsList />
+        <IntegrationsList params={params} />
       </IntegrationAppProvider>
     )
   }
 }
-
-function IntegrationsList() {
-  const { items } = useIntegrations()
+function IntegrationsList({ params }: ConnectPageProps) {
   const integrationApp = useIntegrationApp()
+  const { items } = useIntegrations()
 
   return (
     <div className='max-w-screen-md mx-auto'>
       <p className='my-10 max-w-2xl text-xl text-gray-500 dark:text-slate-400 lg:mx-auto text-center'>
         Please select an app to connect
       </p>
-      <div className='grid grid-cols-5 gap-8'>
+      <div className='grid grid-cols-3 md:grid-cols-5 gap-8'>
         {items
           .sort((first, second) => {
             return first.name < second.name ? -1 : 1
@@ -60,7 +72,7 @@ function IntegrationsList() {
                     onClick={() =>
                       integrationApp.integration(integration.id).connect()
                     }
-                    href={integration.key}
+                    href={`${params.scenario}/${integration.key}`}
                   >
                     <Card>
                       <Logo
