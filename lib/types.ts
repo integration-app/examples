@@ -4,12 +4,13 @@ export interface Scenario {
   slug: string
   flowKey: string
   disabled?: boolean
+  supportedApps?: string[]
 }
 
 export interface Company {
   name: string
   domain: string
-  pushedInto: string[]
+  pushedInto: { [key: string]: any }
 }
 
 export interface Turtle {

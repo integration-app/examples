@@ -1,6 +1,6 @@
 'use client'
 
-export default class Store<T> {
+export default class DataRepo<T> {
   private key: string
 
   constructor(key: string) {

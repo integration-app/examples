@@ -1,8 +1,5 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import ScenarioCard from '@/components/scenario-card'
 import handleToken from '@/lib/token'
 import { siteConfig } from '@/config/site'
@@ -22,7 +19,7 @@ export default function Home() {
           </p>
         </div>
         <div className='mt-10'>
-          <dl className='space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10'>
+          <dl className='space-y-5 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-8'>
             {siteConfig.scenarios.map((item, index) => (
               <ScenarioCard
                 key={index}

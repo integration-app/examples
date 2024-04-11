@@ -8,7 +8,7 @@ import {
   Settings,
   Trash,
   ScrollText,
-  Slash
+  Slash,
 } from 'lucide-react'
 
 export const Icons = {
@@ -20,5 +20,5 @@ export const Icons = {
   settings: Settings,
   script: ScrollText,
   trash: Trash,
-  slash: Slash
+  slash: Slash,
 }

@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
-import { CompanyForm } from '@/components/company-form'
-import { CompaniesProvider } from '@/components/companies-table'
+import CompaniesPage from '@/components/companies-page'
+import CompaniesProvider from '@/components/companies-provider'
 
 export interface FlowPageProps {
   params: {
@@ -18,7 +18,7 @@ export default function FlowPage({ params }: FlowPageProps) {
     case 'push-companies-to-a-crm':
       return (
         <CompaniesProvider>
-          <CompanyForm params={params} />
+          <CompaniesPage params={params} />
         </CompaniesProvider>
       )
 

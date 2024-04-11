@@ -1,11 +1,9 @@
 'use client'
 
-import * as React from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
-import { Button, buttonVariants } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import { siteConfig } from '@/config/site'
 import {
@@ -23,7 +21,7 @@ export default function Header() {
     connection?: string
   }>()
   const activeScenario = siteConfig.scenarios.find(
-    (i) => i.slug == scenario,
+    (i) => i.slug === scenario,
   ) as Scenario
 
   return (

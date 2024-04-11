@@ -1,13 +1,16 @@
 'use client'
 
 import React, { useEffect, useState, useContext } from 'react'
-import { IntegrationAppProvider, useIntegrations } from '@integration-app/react'
+import {
+  IntegrationAppProvider,
+  useIntegrationApp,
+  useIntegrations,
+} from '@integration-app/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UseFormReturn, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import handleToken from '@/lib/token'
-import Store from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -28,12 +31,13 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { CompaniesTable } from '@/components/companies-table'
-import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
+import { FlowPageProps } from '../app/[scenario]/[connection]/page'
 import {
   CompaniesContext,
   type CompaniesContextType,
-} from '@/components/companies-table'
+} from '@/components/companies-provider'
 import { Company } from '@/lib/types'
+import FlowRunLog from '@/components/flow-run-log'
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -49,8 +53,8 @@ const formSchema = z.object({
     }),
 })
 
-export function CompanyForm({ params }: FlowPageProps) {
-  const { store, companies, setCompanies } = useContext(
+export default function CompaniesPage({ params }: FlowPageProps) {
+  const { dataRepo, companies, setCompanies } = useContext(
     CompaniesContext,
   ) as CompaniesContextType
   const [token, setToken] = useState<string>('')
@@ -71,13 +75,13 @@ export function CompanyForm({ params }: FlowPageProps) {
   })
 
   function onSubmit(company: z.infer<typeof formSchema>) {
-    if (store.getItem((i: any) => i.domain == company.domain)) {
+    if (dataRepo.getItem((i: any) => i.domain === company.domain)) {
       console.log('Company with this domain already exists')
       return false
     } else {
-      company = { ...company, pushedInto: [] } as Company
-      store.addItem(company)
-      setCompanies(store.getAll())
+      company = { ...company, pushedInto: {} } as Company
+      dataRepo.addItem(company)
+      setCompanies(dataRepo.getAll())
       form.reset()
       setOpen(false)
     }
@@ -141,6 +145,7 @@ export function CompanyForm({ params }: FlowPageProps) {
       </div>
       <IntegrationAppProvider token={token}>
         <CompaniesTable params={params} />
+        <FlowRunLog integrationKey={params.connection} />
       </IntegrationAppProvider>
     </>
   )

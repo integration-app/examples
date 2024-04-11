@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import { siteConfig } from '@/config/site'
+import { cn } from '@/lib/utils'
 
 import '@/app/globals.css'
 
@@ -21,8 +22,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en'>
-      <body className={inter.className}>
+    <html lang='en' suppressHydrationWarning>
+      {/* https://github.com/vercel/next.js/issues/49350#issuecomment-1540169181 */}
+      <body className={cn(inter.className, 'bg-slate-100 dark:bg-slate-900')}>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
@@ -40,7 +42,7 @@ export default function RootLayout({
                 {children}
               </main>
             </div>
-            <Footer className='border-t' />
+            <Footer className='border-t bg-background' />
           </div>
         </ThemeProvider>
       </body>
