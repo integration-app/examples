@@ -2,7 +2,6 @@
 
 import React, { useState, useContext } from 'react'
 import { IntegrationAppProvider } from '@integration-app/react'
-import { FlowRun } from '@integration-app/sdk'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'

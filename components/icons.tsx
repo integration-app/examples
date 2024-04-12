@@ -1,7 +1,6 @@
 import {
   Eye,
   Blocks,
-  Command,
   ArrowUpFromLine,
   Loader2,
   Plus,
@@ -9,6 +8,10 @@ import {
   Trash,
   ScrollText,
   Slash,
+  ListPlus,
+  CircleCheckBig,
+  OctagonPause,
+  CircleX,
 } from 'lucide-react'
 
 export const Icons = {
@@ -21,4 +24,8 @@ export const Icons = {
   script: ScrollText,
   trash: Trash,
   slash: Slash,
+  queued: ListPlus,
+  completed: CircleCheckBig,
+  stopped: OctagonPause,
+  failed: CircleX,
 }

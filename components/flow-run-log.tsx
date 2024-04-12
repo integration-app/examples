@@ -1,10 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntegrationApp } from '@integration-app/react'
+import { Connection, FlowRun } from '@integration-app/sdk'
 
 import FlowRunItem from '@/components/flow-run-item'
 import DataRepo from '@/lib/data-repo'
+import {
+  FlowRunLogContext,
+  FlowRunLogContextType,
+} from '@/components/flow-run-log-provider'
 
 export default function FlowRunLog({
   integrationKey,
@@ -12,14 +17,17 @@ export default function FlowRunLog({
   integrationKey: string
 }) {
   const integrationApp = useIntegrationApp()
-  const [flowRunItems, setFlowRunItems] = useState<any>([])
+
+  const { flowRunItems, setFlowRunItems } = useContext(
+    FlowRunLogContext,
+  ) as FlowRunLogContextType
 
   useEffect(() => {
     async function loadFlowRuns(integrationKey: string) {
       const connectionsRepo = new DataRepo('connections')
       const connection = connectionsRepo.getItem(
         (i: any) => i.integration.key === integrationKey,
-      ) as any
+      ) as Connection
       const integrationId = connection.integrationId
       const flowRuns = await integrationApp.flowRuns.find({
         integrationId: integrationId,

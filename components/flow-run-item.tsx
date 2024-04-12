@@ -7,6 +7,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Button } from '@/components/ui/button'
+import { Icons } from '@/components/icons'
 
 export default function FlowRunItem({
   data,
@@ -15,13 +16,13 @@ export default function FlowRunItem({
   data: any
   skipInputWrapper?: string
 }) {
-  const emojiByState = {
-    queued: '⏳',
-    running: '🏃',
-    completed: '✅',
-    stopped: '⏹️',
-    failed: '❌',
-  } as { [key: string]: string }
+  const iconByState = {
+    queued: <Icons.queued />,
+    running: <Icons.spinner className='animate-spin' />,
+    completed: <Icons.completed />,
+    stopped: <Icons.stopped />,
+    failed: <Icons.failed />,
+  } as { [key: string]: React.ReactNode }
 
   return (
     <Card className='mt-2 p-4'>
@@ -37,8 +38,8 @@ export default function FlowRunItem({
               2,
             )}
           </div>
-          <div className='flex-1 w-1/8 py-2 text-right'>
-            {emojiByState[data?.state]}
+          <div className='flex-1 flex w-1/8 py-2 justify-end'>
+            {iconByState[data?.state]}
           </div>
           <CollapsibleTrigger asChild className='w-20 ml-8'>
             <Button variant='outline'>Details</Button>
