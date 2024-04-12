@@ -1,12 +1,9 @@
 'use client'
 
 import ScenarioCard from '@/components/scenario-card'
-import handleToken from '@/lib/token'
 import { siteConfig } from '@/config/site'
 
 export default function Home() {
-  handleToken()
-
   return (
     <section className='py-12'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>

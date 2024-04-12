@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import CompaniesPage from '@/components/companies-page'

@@ -10,9 +10,11 @@ export default async function handleToken() {
   if (token === null || needRefresh(token)) {
     refreshToken()
   }
+
+  return token as string
 }
 
-async function refreshToken() {
+export async function refreshToken() {
   const uuid = localStorage.getItem('uuid')
   const res = await fetch(`/integration-token/${uuid}`)
 

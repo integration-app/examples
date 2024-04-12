@@ -8,7 +8,13 @@ import {
 } from '@/components/ui/collapsible'
 import { Button } from '@/components/ui/button'
 
-export default function FlowRunItem({ data }: { data: any }) {
+export default function FlowRunItem({
+  data,
+  skipInputWrapper,
+}: {
+  data: any
+  skipInputWrapper?: string
+}) {
   const emojiByState = {
     queued: '⏳',
     running: '🏃',
@@ -23,7 +29,13 @@ export default function FlowRunItem({ data }: { data: any }) {
         <div className='flex px-4'>
           <div className='w-1/4 py-2'>{data?.flowInstance?.name}</div>
           <div className='w-1/2 py-2'>
-            {JSON.stringify(data?.input?.[0], null, 2)}
+            {JSON.stringify(
+              skipInputWrapper
+                ? data?.input?.[0]?.[skipInputWrapper]
+                : data?.input?.[0],
+              null,
+              2,
+            )}
           </div>
           <div className='flex-1 w-1/8 py-2 text-right'>
             {emojiByState[data?.state]}

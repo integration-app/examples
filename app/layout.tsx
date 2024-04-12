@@ -6,6 +6,7 @@ import Header from '@/components/header'
 import Footer from '@/components/footer'
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
+import TokenProvider from '@/components/token-provider'
 
 import '@/app/globals.css'
 
@@ -31,19 +32,21 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className='flex min-h-screen flex-col space-y-6'>
-            <header className='sticky top-0 z-40 border-b bg-background'>
-              <div className='container flex h-16 items-center justify-between py-4'>
-                <Header />
+          <TokenProvider>
+            <div className='flex min-h-screen flex-col space-y-6'>
+              <header className='sticky top-0 z-40 border-b bg-background'>
+                <div className='container flex h-16 items-center justify-between py-4'>
+                  <Header />
+                </div>
+              </header>
+              <div className='container grid flex-1 gap-12'>
+                <main className='flex w-full flex-1 flex-col overflow-hidden'>
+                  {children}
+                </main>
               </div>
-            </header>
-            <div className='container grid flex-1 gap-12'>
-              <main className='flex w-full flex-1 flex-col overflow-hidden'>
-                {children}
-              </main>
+              <Footer className='border-t bg-background' />
             </div>
-            <Footer className='border-t bg-background' />
-          </div>
+          </TokenProvider>
         </ThemeProvider>
       </body>
     </html>

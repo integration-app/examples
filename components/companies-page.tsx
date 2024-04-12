@@ -1,16 +1,12 @@
 'use client'
 
-import React, { useEffect, useState, useContext } from 'react'
-import {
-  IntegrationAppProvider,
-  useIntegrationApp,
-  useIntegrations,
-} from '@integration-app/react'
+import React, { useState, useContext } from 'react'
+import { IntegrationAppProvider } from '@integration-app/react'
+import { FlowRun } from '@integration-app/sdk'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import handleToken from '@/lib/token'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -31,13 +27,14 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { CompaniesTable } from '@/components/companies-table'
-import { FlowPageProps } from '../app/[scenario]/[connection]/page'
+import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
 import {
   CompaniesContext,
   type CompaniesContextType,
 } from '@/components/companies-provider'
 import { Company } from '@/lib/types'
 import FlowRunLog from '@/components/flow-run-log'
+import { TokenContext } from '@/components/token-provider'
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -57,17 +54,9 @@ export default function CompaniesPage({ params }: FlowPageProps) {
   const { dataRepo, companies, setCompanies } = useContext(
     CompaniesContext,
   ) as CompaniesContextType
-  const [token, setToken] = useState<string>('')
-  const [open, setOpen] = useState(false)
+  const token = useContext(TokenContext) as string
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token === null) {
-      handleToken()
-    } else {
-      setToken(token)
-    }
-  }, [])
+  const [open, setOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,7 +64,7 @@ export default function CompaniesPage({ params }: FlowPageProps) {
   })
 
   function onSubmit(company: z.infer<typeof formSchema>) {
-    if (dataRepo.getItem((i: any) => i.domain === company.domain)) {
+    if (companies.find((i: any) => i.domain === company.domain)) {
       console.log('Company with this domain already exists')
       return false
     } else {

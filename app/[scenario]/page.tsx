@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 import {
   useIntegrationApp,
@@ -9,7 +9,6 @@ import {
   useConnections,
 } from '@integration-app/react'
 
-import handleToken from '@/lib/token'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,8 +21,9 @@ import Logo from '@/components/logo'
 import { siteConfig } from '@/config/site'
 import { Scenario } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Integration } from '@integration-app/sdk'
+import { Connection, Flow, Integration } from '@integration-app/sdk'
 import DataRepo from '@/lib/data-repo'
+import { TokenContext } from '@/components/token-provider'
 
 interface ConnectPageProps {
   params: {
@@ -32,20 +32,11 @@ interface ConnectPageProps {
 }
 
 export default function ConnectPage({ params }: ConnectPageProps) {
-  const [token, setToken] = useState<string | null>(null)
-
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token === null) {
-      handleToken()
-    } else {
-      setToken(token)
-    }
-  }, [])
-
   if (!siteConfig.scenarios.map((i) => i.slug).includes(params.scenario)) {
     redirect('/')
   }
+
+  const token = useContext(TokenContext) as string
 
   if (token) {
     return (
@@ -62,21 +53,29 @@ function IntegrationsList({ params }: ConnectPageProps) {
   const { items } = useIntegrations()
   const { connections } = useConnections()
   const connectionsRepo = new DataRepo('connections')
+  const [activeIntegrations, setActiveIntegrations] = useState<string[]>([])
 
-  const isDisabled = (integrationKey: string) => {
-    const activeScenario = siteConfig.scenarios.find(
-      (i) => i.slug === params.scenario,
-    ) as Scenario
+  const activeScenario = siteConfig.scenarios.find(
+    (i) => i.slug === params.scenario,
+  ) as Scenario
 
-    if (activeScenario.supportedApps?.length) {
-      return !activeScenario.supportedApps.includes(integrationKey)
-    } else return false
-  }
+  useEffect(() => {
+    integrationApp.flows
+      .findAll({
+        universalFlowId: activeScenario.universalFlowId,
+      })
+      .then((flows) => {
+        const integrations = flows.map((i) => {
+          return i.integration?.key as string
+        })
+        setActiveIntegrations(integrations)
+      })
+  }, [])
 
   const isConnected = (integrationKey: string) => {
     const savedConnection = connectionsRepo.getItem(
       (i: any) => i.integration.key === integrationKey,
-    ) as any
+    ) as Connection
 
     return (
       savedConnection && !savedConnection.error && !savedConnection.disconnected
@@ -113,29 +112,16 @@ function IntegrationsList({ params }: ConnectPageProps) {
           .sort((first, second) => {
             return first.name < second.name ? -1 : 1
           })
+          .filter((integration) => activeIntegrations.includes(integration.key))
           .map((integration, index) => (
             <TooltipProvider key={index}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => openConnection(integration)}
-                    disabled={isDisabled(integration.key)}
-                    className={cn(
-                      isDisabled(integration.key) ? 'cursor-not-allowed' : '',
-                      isConnected(integration.key)
-                        ? 'border-b-3 border-indigo-500'
-                        : '',
-                      'bg-white dark:bg-black hover:bg-background border w-24 h-24 p-2 rounded-2xl',
-                    )}
+                    className='bg-white dark:bg-black hover:bg-background border w-24 h-24 p-2 rounded-2xl'
                   >
-                    <Card
-                      className={cn(
-                        isDisabled(integration.key)
-                          ? 'opacity-40'
-                          : 'opacity-100',
-                        'border-hidden',
-                      )}
-                    >
+                    <Card className='border-hidden'>
                       <Logo
                         key={index}
                         className={cn(
@@ -146,6 +132,13 @@ function IntegrationsList({ params }: ConnectPageProps) {
                         alt={integration.name}
                       />
                     </Card>
+                    {isConnected(integration.key) ? (
+                      <span className='relative'>
+                        <span className='inline-block absolute top-6 -right-2 rounded-md bg-green-50 dark:bg-green-950 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-500 ring-1 ring-inset ring-green-500/10'>
+                          active
+                        </span>
+                      </span>
+                    ) : null}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

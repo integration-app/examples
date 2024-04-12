@@ -41,7 +41,7 @@ export default function FlowRunLog({
       <h2 className='text-2xl font-bold'>Integration Run Log</h2>
       {flowRunItems?.length ? (
         flowRunItems.map((item: any, index: number) => (
-          <FlowRunItem key={index} data={item} />
+          <FlowRunItem key={index} data={item} skipInputWrapper='company' />
         ))
       ) : (
         <section className='py-12'>Log is empty.</section>

@@ -12,7 +12,7 @@ export default function ScenarioCard(
   props: ScenarioCardProps,
 ): React.ReactElement {
   return (
-    <Link href={props.link} className='inline-block'>
+    <Link href={props.link} className='inline-block w-full'>
       <Card className='p-4 bg-slate-50 hover:bg-slate-250 dark:bg-slate-950 dark:hover:bg-slate-750'>
         <span className='sr-only'>View</span>
         <dt>
