@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 import {
   useIntegrationApp,
-  IntegrationAppProvider,
   useIntegrations,
   useConnections,
 } from '@integration-app/react'
@@ -39,11 +38,7 @@ export default function ConnectPage({ params }: ConnectPageProps) {
   const token = useContext(TokenContext) as string
 
   if (token) {
-    return (
-      <IntegrationAppProvider token={token}>
-        <IntegrationsList params={params} />
-      </IntegrationAppProvider>
-    )
+    return <IntegrationsList params={params} />
   }
 }
 

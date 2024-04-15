@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useContext } from 'react'
-import { IntegrationAppProvider } from '@integration-app/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -130,10 +129,8 @@ export default function CompaniesPage({ params }: FlowPageProps) {
           </DialogContent>
         </Dialog>
       </div>
-      <IntegrationAppProvider token={token}>
-        <CompaniesTable params={params} />
-        <FlowRunLog integrationKey={params.connection} />
-      </IntegrationAppProvider>
+      <CompaniesTable params={params} />
+      <FlowRunLog integrationKey={params.connection} />
     </>
   )
 }
