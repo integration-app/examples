@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Flow, FlowRun } from '@integration-app/sdk'
+import { FlowRun } from '@integration-app/sdk'
 
 export const FlowRunLogContext = React.createContext({})
 

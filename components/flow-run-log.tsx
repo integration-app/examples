@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntegrationApp } from '@integration-app/react'
-import { Connection, FlowRun } from '@integration-app/sdk'
+import { Connection } from '@integration-app/sdk'
 
 import FlowRunItem from '@/components/flow-run-item'
 import DataRepo from '@/lib/data-repo'
@@ -31,6 +31,7 @@ export default function FlowRunLog({
       const integrationId = connection.integrationId
       const flowRuns = await integrationApp.flowRuns.find({
         integrationId: integrationId,
+        limit: 5,
       })
       return flowRuns.items
     }

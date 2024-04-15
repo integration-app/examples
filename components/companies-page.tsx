@@ -63,16 +63,15 @@ export default function CompaniesPage({ params }: FlowPageProps) {
   })
 
   function onSubmit(company: z.infer<typeof formSchema>) {
-    if (companies.find((i: any) => i.domain === company.domain)) {
-      console.log('Company with this domain already exists')
-      return false
-    } else {
-      company = { ...company, pushedInto: {} } as Company
-      dataRepo.addItem(company)
-      setCompanies(dataRepo.getAll())
-      form.reset()
-      setOpen(false)
-    }
+    company = {
+      ...company,
+      id: Math.max(...companies.map((i) => i.id)) + 1,
+      pushedInto: {},
+    } as Company
+    dataRepo.addItem(company)
+    setCompanies(dataRepo.getAll())
+    form.reset()
+    setOpen(false)
   }
 
   return (

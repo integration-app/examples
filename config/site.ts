@@ -23,12 +23,18 @@ export const siteConfig = {
   seed: {
     companies: [
       {
+        id: 1,
         name: 'Microsoft Corporation',
         domain: 'microsoft.com',
         pushedInto: {},
       },
-      { name: 'Apple Inc.', domain: 'apple.com', pushedInto: {} },
-      { name: 'NVIDIA Corporation', domain: 'nvidia.com', pushedInto: {} },
+      { id: 2, name: 'Apple Inc.', domain: 'apple.com', pushedInto: {} },
+      {
+        id: 3,
+        name: 'NVIDIA Corporation',
+        domain: 'nvidia.com',
+        pushedInto: {},
+      },
     ],
   },
 }

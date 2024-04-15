@@ -8,6 +8,7 @@ export interface Scenario {
 }
 
 export interface Company {
+  id: number
   name: string
   domain: string
   pushedInto: { [key: string]: any }
