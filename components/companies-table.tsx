@@ -40,26 +40,9 @@ export function CompaniesTable({ params }: FlowPageProps) {
   const { dataRepo, companies, setCompanies } = useContext(
     CompaniesContext,
   ) as CompaniesContextType
-  const { flowRunItems, setFlowRunItems, addFlowRunItem } = useContext(
+  const { upsertFlowRunItem } = useContext(
     FlowRunLogContext,
   ) as FlowRunLogContextType
-
-  function handleUpdate(flowRun: FlowRun) {
-    // const existingIndex = flowRunItems.findIndex((item) => {
-    //   return item.id === flowRun.id
-    // })
-
-    // if (existingIndex !== -1) {
-    //   setFlowRunItems((items) => {
-    //     items[existingIndex] = flowRun
-    //     return items
-    //   })
-    // } else {
-    //   addFlowRunItem(flowRun)
-    // }
-
-    setFlowRunItems([flowRun, ...flowRunItems])
-  }
 
   const pushCompany = async (company: Company) => {
     try {
@@ -77,7 +60,7 @@ export function CompaniesTable({ params }: FlowPageProps) {
               domain: company.domain,
             },
           },
-          onUpdate: handleUpdate,
+          onUpdate: upsertFlowRunItem,
         })
 
       const flowRunId = flowRun.id

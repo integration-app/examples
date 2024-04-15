@@ -8,6 +8,7 @@ import {
   useIntegrations,
   useConnections,
 } from '@integration-app/react'
+import { Connection, Integration } from '@integration-app/sdk'
 
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -21,7 +22,6 @@ import Logo from '@/components/logo'
 import { siteConfig } from '@/config/site'
 import { Scenario } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Connection, Flow, Integration } from '@integration-app/sdk'
 import DataRepo from '@/lib/data-repo'
 import { TokenContext } from '@/components/token-provider'
 
