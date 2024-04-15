@@ -183,7 +183,7 @@ export function CompaniesTable({ params }: FlowPageProps) {
           </Dialog>
         </>
       ) : (
-        <section className='py-12'>You have no companies.</section>
+        <section className='py-12'>Companies will appear here.</section>
       )}
     </>
   )

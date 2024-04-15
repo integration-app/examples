@@ -52,7 +52,7 @@ export default function FlowRunLog({
           <FlowRunItem key={index} data={item} skipInputWrapper='company' />
         ))
       ) : (
-        <section className='py-12'>Log is empty.</section>
+        <section className='py-12'>Integration logs will appear here.</section>
       )}
     </div>
   )
