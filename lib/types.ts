@@ -2,7 +2,6 @@ export interface Scenario {
   name: string
   description: string
   slug: string
-  universalFlowId: string
   flowKey: string
   disabled?: boolean
 }

@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import Link from 'next/link'
 import { useIntegrationApp } from '@integration-app/react'
-import { FlowRun } from '@integration-app/sdk'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Icons } from '@/components/icons'

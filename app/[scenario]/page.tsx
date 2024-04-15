@@ -60,14 +60,12 @@ function IntegrationsList({ params }: ConnectPageProps) {
   ) as Scenario
 
   useEffect(() => {
-    integrationApp.flows
-      .findAll({
-        universalFlowId: activeScenario.universalFlowId,
-      })
-      .then((flows) => {
-        const integrations = flows.map((i) => {
-          return i.integration?.key as string
-        })
+    integrationApp
+      .flow({ key: activeScenario.flowKey })
+      .get()
+      .then((flow) => {
+        const integrations =
+          flow.appliedToIntegrations?.map((item) => item.integration.key) || []
         setActiveIntegrations(integrations)
       })
   }, [])
