@@ -30,7 +30,6 @@ import {
 } from '@/components/companies-provider'
 import { Company } from '@/lib/types'
 import FlowRunLog from '@/components/flow-run-log'
-import { TokenContext } from '@/components/token-provider'
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -50,7 +49,6 @@ export default function CompaniesPage({ params }: FlowPageProps) {
   const { dataRepo, companies, setCompanies } = useContext(
     CompaniesContext,
   ) as CompaniesContextType
-  const token = useContext(TokenContext) as string
 
   const [open, setOpen] = useState(false)
 
@@ -70,6 +68,11 @@ export default function CompaniesPage({ params }: FlowPageProps) {
     form.reset()
     setOpen(false)
   }
+
+  const formFields = [
+    { label: 'Company name', placeholder: 'Acme Inc.' },
+    { label: 'Company domain', placeholder: 'acme.com' },
+  ]
 
   return (
     <>
@@ -93,32 +96,24 @@ export default function CompaniesPage({ params }: FlowPageProps) {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-8'
               >
-                <FormField
-                  control={form.control}
-                  name='name'
-                  render={({ field }) => (
-                    <FormItem className='gap-4'>
-                      <FormLabel>Company name</FormLabel>
-                      <FormControl>
-                        <Input placeholder='Acme Inc.' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name='domain'
-                  render={({ field }) => (
-                    <FormItem className='gap-4'>
-                      <FormLabel>Company domain</FormLabel>
-                      <FormControl>
-                        <Input placeholder='acme.com' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {formFields.map((formField) => (
+                  <FormField
+                    control={form.control}
+                    name='name'
+                    render={({ field }) => (
+                      <FormItem className='gap-4'>
+                        <FormLabel>{formField.label}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={formField.placeholder}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
                 <Button className='w-full' type='submit'>
                   Submit
                 </Button>

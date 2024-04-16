@@ -38,8 +38,8 @@ export default function TokenProvider({
       }
     }
 
-    if (token === null || needRefresh(token)) refreshToken()
-  }, [token, setToken])
+    if (needRefresh(token)) refreshToken()
+  }, [])
 
   return <TokenContext.Provider value={token}>{children}</TokenContext.Provider>
 }
