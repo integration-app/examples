@@ -9,7 +9,14 @@ export const useLocalStorage = <T>(
   useEffect(() => {
     const item = window.localStorage.getItem(key)
     if (item) {
-      setStoredValue(JSON.parse(item))
+      const value = (() => {
+        try {
+          return JSON.parse(item)
+        } catch {
+          return item as string
+        }
+      })()
+      setStoredValue(value)
     }
   }, [key])
 

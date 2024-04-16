@@ -9,7 +9,6 @@ import { siteConfig } from '@/config/site'
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
@@ -45,9 +44,7 @@ export default function Header() {
                 <Icons.slash />
               </BreadcrumbSeparator>
               <BreadcrumbItem>
-                <BreadcrumbLink href={`/${scenario}`}>
-                  {activeScenario?.name}
-                </BreadcrumbLink>
+                <Link href={`/${scenario}`}>{activeScenario?.name}</Link>
               </BreadcrumbItem>
             </>
           )}
@@ -57,9 +54,7 @@ export default function Header() {
                 <Icons.slash />
               </BreadcrumbSeparator>
               <BreadcrumbItem>
-                <BreadcrumbLink href={`/${scenario}/${connection}`}>
-                  {connection}
-                </BreadcrumbLink>
+                <Link href={`/${scenario}/${connection}`}>{connection}</Link>
               </BreadcrumbItem>
             </>
           )}

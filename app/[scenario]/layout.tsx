@@ -2,9 +2,9 @@
 
 import { useContext } from 'react'
 import { IntegrationAppProvider } from '@integration-app/react'
-import FlowRunLogProvider from '@/components/flow-run-log-provider'
 
 import { TokenContext } from '@/components/token-provider'
+import FlowRunLogProvider from '@/components/flow-run-log-provider'
 
 export default function InnerLayout({
   children,

@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useContext, useEffect } from 'react'
 import { useIntegrationApp } from '@integration-app/react'
 import { Connection } from '@integration-app/sdk'

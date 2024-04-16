@@ -1,10 +1,11 @@
 'use client'
 
+import { useContext } from 'react'
 import { redirect } from 'next/navigation'
 
 import CompaniesPage from '@/components/companies-page'
 import CompaniesProvider from '@/components/companies-provider'
-import FlowRunLogProvider from '@/components/flow-run-log-provider'
+import { TokenContext } from '@/components/token-provider'
 
 export interface FlowPageProps {
   params: {
@@ -14,14 +15,15 @@ export interface FlowPageProps {
 }
 
 export default function FlowPage({ params }: FlowPageProps) {
+  const token = useContext(TokenContext) as string
+  if (!token) return <div>Loading...</div>
+
   switch (params.scenario) {
     case 'push-companies-to-a-crm':
       return (
-        <FlowRunLogProvider>
-          <CompaniesProvider>
-            <CompaniesPage params={params} />
-          </CompaniesProvider>
-        </FlowRunLogProvider>
+        <CompaniesProvider>
+          <CompaniesPage params={params} />
+        </CompaniesProvider>
       )
 
     default:

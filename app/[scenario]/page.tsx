@@ -36,10 +36,9 @@ export default function ConnectPage({ params }: ConnectPageProps) {
   }
 
   const token = useContext(TokenContext) as string
+  if (!token) return <div>Loading...</div>
 
-  if (token) {
-    return <IntegrationsList params={params} />
-  }
+  return <IntegrationsList params={params} />
 }
 
 function IntegrationsList({ params }: ConnectPageProps) {
