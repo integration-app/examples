@@ -96,8 +96,9 @@ export default function CompaniesPage({ params }: FlowPageProps) {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-8'
               >
-                {formFields.map((formField) => (
+                {formFields.map((formField, index) => (
                   <FormField
+                    key={index}
                     control={form.control}
                     name='name'
                     render={({ field }) => (
