@@ -69,11 +69,6 @@ export default function CompaniesPage({ params }: FlowPageProps) {
     setOpen(false)
   }
 
-  const formFields = [
-    { label: 'Company name', placeholder: 'Acme Inc.' },
-    { label: 'Company domain', placeholder: 'acme.com' },
-  ]
-
   return (
     <>
       <div className='flex justify-left mt-2'>
@@ -96,25 +91,32 @@ export default function CompaniesPage({ params }: FlowPageProps) {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-8'
               >
-                {formFields.map((formField, index) => (
-                  <FormField
-                    key={index}
-                    control={form.control}
-                    name='name'
-                    render={({ field }) => (
-                      <FormItem className='gap-4'>
-                        <FormLabel>{formField.label}</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder={formField.placeholder}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
+                <FormField
+                  control={form.control}
+                  name='name'
+                  render={({ field }) => (
+                    <FormItem className='gap-4'>
+                      <FormLabel>Company name</FormLabel>
+                      <FormControl>
+                        <Input placeholder='Acme Inc.' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='domain'
+                  render={({ field }) => (
+                    <FormItem className='gap-4'>
+                      <FormLabel>Company domain</FormLabel>
+                      <FormControl>
+                        <Input placeholder='acme.com' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button className='w-full' type='submit'>
                   Submit
                 </Button>
