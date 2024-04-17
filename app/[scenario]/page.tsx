@@ -54,10 +54,11 @@ function IntegrationsList({ params }: ConnectPageProps) {
   ) as Scenario
 
   const { flow } = useFlow({
-    key: activeScenario?.flowKey
+    key: activeScenario?.flowKey,
   })
 
-  const activeIntegrations = flow?.appliedToIntegrations?.map((item) => item.integration.key) || []
+  const activeIntegrations =
+    flow?.appliedToIntegrations?.map((item) => item.integration.key) || []
 
   const isConnected = (integrationKey: string) => {
     const savedConnection = connectionsRepo.getItem(

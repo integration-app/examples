@@ -31,7 +31,6 @@ export default function CompaniesProvider({
 
   const [companies, setCompanies] = useState(loadCompanies())
 
-
   return (
     <CompaniesContext.Provider value={{ dataRepo, companies, setCompanies }}>
       {children}
