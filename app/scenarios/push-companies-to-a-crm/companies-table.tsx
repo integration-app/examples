@@ -18,7 +18,7 @@ import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
 import {
   CompaniesContext,
   type CompaniesContextType,
-} from '@/components/companies-provider'
+} from '@/app/scenarios/push-companies-to-a-crm/companies-provider'
 import {
   FlowRunLogContext,
   FlowRunLogContextType,

@@ -22,12 +22,12 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { CompaniesTable } from '@/components/companies-table'
+import { CompaniesTable } from '@/app/scenarios/push-companies-to-a-crm/companies-table'
 import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
 import {
   CompaniesContext,
   type CompaniesContextType,
-} from '@/components/companies-provider'
+} from '@/app/scenarios/push-companies-to-a-crm/companies-provider'
 import { Company } from '@/lib/types'
 import FlowRunLog from '@/components/flow-run-log'
 

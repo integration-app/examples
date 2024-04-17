@@ -4,23 +4,21 @@ This is a [Next.js](https://nextjs.org/) project using the [App router](https://
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Copy `.env-sample` to `.env` and fill in the required values
+- `npm i`
+- `npm run dev`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 The page auto-updates as you edit the project files.
 
-## Add new Scenario
+## Enabling scenarios
+
+To make scenario in the app work end-to-end, you need to add a corresponding scenario to your workspace from the list of scenario templates and apply it to relevant apps.
+
+You can find the name of the matching scenario name as displayed in this app's UI.
+
+## Add new scenario to the app
 
 First, you need to create and set up a Flow in your [Integration.app console](https://console.integration.app/w/0/integrations/flows). Then:
 

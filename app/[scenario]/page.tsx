@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 import {
   useIntegrationApp,
   useIntegrations,
   useConnections,
+  useFlow,
 } from '@integration-app/react'
 import { Connection, Integration } from '@integration-app/sdk'
 
@@ -47,22 +48,16 @@ function IntegrationsList({ params }: ConnectPageProps) {
   const { items } = useIntegrations()
   const { connections } = useConnections()
   const connectionsRepo = new DataRepo('connections')
-  const [activeIntegrations, setActiveIntegrations] = useState<string[]>([])
 
   const activeScenario = siteConfig.scenarios.find(
     (i) => i.slug === params.scenario,
   ) as Scenario
 
-  useEffect(() => {
-    integrationApp
-      .flow({ key: activeScenario.flowKey })
-      .get()
-      .then((flow) => {
-        const integrations =
-          flow.appliedToIntegrations?.map((item) => item.integration.key) || []
-        setActiveIntegrations(integrations)
-      })
-  }, [])
+  const { flow } = useFlow({
+    key: activeScenario?.flowKey
+  })
+
+  const activeIntegrations = flow?.appliedToIntegrations?.map((item) => item.integration.key) || []
 
   const isConnected = (integrationKey: string) => {
     const savedConnection = connectionsRepo.getItem(

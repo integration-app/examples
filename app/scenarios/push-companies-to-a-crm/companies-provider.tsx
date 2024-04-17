@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Company } from '@/lib/types'
 import { siteConfig } from '@/config/site'
@@ -18,22 +18,19 @@ export default function CompaniesProvider({
   children: React.ReactNode
 }) {
   const dataRepo = new DataRepo('companies')
-  const [companies, setCompanies] = useState<Company[]>([])
 
-  useEffect(() => {
-    const loadCompanies = () => {
-      if (localStorage.companies === undefined) {
-        const initialCompanies = siteConfig.seed.companies as Company[]
-        dataRepo.putAll(initialCompanies)
-        return initialCompanies
-      } else {
-        return dataRepo.getAll() as Company[]
-      }
+  const loadCompanies = () => {
+    if (localStorage.companies === undefined) {
+      const initialCompanies = siteConfig.seed.companies as Company[]
+      dataRepo.putAll(initialCompanies)
+      return initialCompanies
+    } else {
+      return dataRepo.getAll() as Company[]
     }
+  }
 
-    const loadedCompanies = loadCompanies()
-    setCompanies(loadedCompanies)
-  }, [])
+  const [companies, setCompanies] = useState(loadCompanies())
+
 
   return (
     <CompaniesContext.Provider value={{ dataRepo, companies, setCompanies }}>
