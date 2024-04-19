@@ -45,8 +45,8 @@ export default function ConnectPage({ params }: ConnectPageProps) {
 function IntegrationsList({ params }: ConnectPageProps) {
   const router = useRouter()
   const integrationApp = useIntegrationApp()
-  const { items } = useIntegrations()
-  const { connections } = useConnections()
+  const { items } = useIntegrations({ limit: 100 })
+  const { connections } = useConnections({ limit: 100 })
   const connectionsRepo = new DataRepo('connections')
 
   const activeScenario = siteConfig.scenarios.find(
