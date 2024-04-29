@@ -12,6 +12,8 @@ import {
   CircleCheckBig,
   OctagonPause,
   CircleX,
+  AlignJustify,
+  LayoutGrid,
 } from 'lucide-react'
 
 export const Icons = {
@@ -28,4 +30,6 @@ export const Icons = {
   completed: CircleCheckBig,
   stopped: OctagonPause,
   failed: CircleX,
+  grid: LayoutGrid,
+  list: AlignJustify,
 }
