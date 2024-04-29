@@ -26,7 +26,7 @@ export async function POST(request: Request, { params }: { params: Params }) {
 
       const flowRun = await integrationApp
         .flowInstance({
-          flowKey: 'continuous-import-of-records-to-my-app',
+          flowKey: process.env.FILE_IMPORT_FLOW_KEY,
           integrationKey: integration,
           // autoCreate: true,
         })
