@@ -26,11 +26,11 @@ export default function FileIcon({ file }: { file: DataRecord }) {
   const { fileIcon, bgColor } = fileTypeIcons[fileType]
 
   return (
-    <div className='p-2 flex h-72'>
+    <div className='p-2 flex h-64'>
       <div
         className={cn('w-full pt-10 flex justify-center rounded-sm', bgColor)}
       >
-        {cloneElement(fileIcon, { color: 'white', size: '200' })}
+        {cloneElement(fileIcon, { color: 'white', size: '100' })}
       </div>
     </div>
   )

@@ -10,6 +10,8 @@ export interface FilesContextType {
   setOutput: (_: object) => void
   outputOpen: boolean
   setOutputOpen: (_: boolean) => void
+  downloading: string[]
+  setDownloading: (_: Function | string[]) => void
 }
 
 export default function FilesProvider({
@@ -20,10 +22,20 @@ export default function FilesProvider({
   const [files, setFiles] = useState<DataRecord[]>([])
   const [output, setOutput] = useState({})
   const [outputOpen, setOutputOpen] = useState(false)
+  const [downloading, setDownloading] = useState<string[]>([])
 
   return (
     <FilesContext.Provider
-      value={{ files, setFiles, output, setOutput, outputOpen, setOutputOpen }}
+      value={{
+        files,
+        setFiles,
+        output,
+        setOutput,
+        outputOpen,
+        setOutputOpen,
+        downloading,
+        setDownloading,
+      }}
     >
       {children}
     </FilesContext.Provider>

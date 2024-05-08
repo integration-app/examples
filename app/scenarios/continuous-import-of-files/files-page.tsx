@@ -19,7 +19,7 @@ import FilesList from './files-list'
 import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
 
-export function useFileUpdates(integration: string, importing: boolean) {
+export function useFileUpdates(integration: string, importing: boolean, setImporting: Function) {
   const token = useContext(TokenContext) as string
   const { files, setFiles } = useContext(FilesContext) as FilesContextType
 
@@ -35,7 +35,7 @@ export function useFileUpdates(integration: string, importing: boolean) {
         })
         const data = await response.json()
         if (response.ok === false || !data.records) {
-          // setImporting(false)
+          setImporting(false)
           console.error(data)
 
           return
@@ -47,7 +47,7 @@ export function useFileUpdates(integration: string, importing: boolean) {
     }
 
     return () => clearInterval(interval)
-  }, [importing, integration, token, setFiles])
+  }, [importing, setImporting, integration, token, setFiles])
 
   return [files, setFiles]
 }
@@ -65,47 +65,26 @@ export default function FilesPage({ params }: FlowPageProps) {
     'viewmode',
     'list',
   )
-  const [files, setFiles] = useFileUpdates(params.connection, importing) as [
+  const [files, setFiles] = useFileUpdates(params.connection, importing, setImporting) as [
     DataRecord[],
     Function,
   ]
 
   async function startImport() {
     setImporting(true)
-    // const response = await fetch(`/api/files/${params.connection}/init`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'x-integration-app-token': token,
-    //   },
-    // })
-    const response = await fetch(`/api/files/${params.connection}`, {
+    const response = await fetch(`/api/files/${params.connection}/init`, {
+      method: 'POST',
       headers: {
         'x-integration-app-token': token,
       },
     })
     const data = await response.json()
     if (response.ok === false || !data.records) {
-      // setImporting(false)
+      setImporting(false)
       console.error(data)
 
       return
     }
-    // const integrationApp = new IntegrationAppClient({ token: token })
-
-    // const flowRun = await integrationApp
-    //   .flowInstance({
-    //     flowKey: 'continuous-import-of-records-to-my-app',
-    //     integrationKey: 'dropbox',
-    //     // autoCreate: true,
-    //   })
-    //   .run({
-    //     input: {
-    //       model: 'files',
-    //     },
-    //   })
-    // const data = await integrationApp
-    //   .flowRun(flowRun.id)
-    //   .getOutput({ nodeKey: 'list-records' })
     if (data.records.length > 0) {
       setFiles(data.records)
     }

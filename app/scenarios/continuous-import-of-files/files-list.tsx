@@ -29,8 +29,8 @@ export default function FilesList({ files }: { files: DataRecord[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {files.map((file) => (
-          <FileRow key={file.id} file={file} />
+        {files.map((file, index) => (
+          <FileRow key={index} file={file} />
         ))}
       </TableBody>
     </Table>

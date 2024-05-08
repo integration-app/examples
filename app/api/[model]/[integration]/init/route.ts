@@ -10,9 +10,6 @@ export async function POST(request: Request, { params }: { params: Params }) {
 
   try {
     const { token } = verifyToken(request)
-    // @ts-expect-error ts(2339)
-    // Property 'internalId' does not exist on type 'Self'.
-    // SDK is out of date
     const { internalId } = await getSelf(token)
 
     try {
@@ -28,17 +25,15 @@ export async function POST(request: Request, { params }: { params: Params }) {
         .flowInstance({
           flowKey: process.env.NEXT_PUBLIC_FILE_IMPORT_FLOW_KEY,
           integrationKey: integration,
-          // autoCreate: true,
+          autoCreate: true,
         })
         .run({
-          input: {
-            model: 'files',
-          },
+          input: { model: model },
         })
-      const output = await integrationApp
+      const outputs = await integrationApp
         .flowRun(flowRun.id)
-        .getOutput({ nodeKey: 'list-records' })
-      const records = output.items.map((record: DataRecord) => {
+        .getNodeOutputs('list-records')
+      const records = outputs.items[0].map((record: DataRecord) => {
         return { ...record, ...commonFields, updatedAt: Date.now() }
       })
 

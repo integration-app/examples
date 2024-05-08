@@ -7,7 +7,7 @@ import FileActions from './file-actions'
 
 export default function FileCard({ file }: { file: DataRecord }) {
   return (
-    <Card className='sm:w-full md:w-72 h-96 overflow-hidden relative'>
+    <Card className='sm:w-full md:w-72 h-72 overflow-hidden relative'>
       {file?.unifiedFields?.previewUri ? (
         <div className='p-2 flex items-center justify-bottom'>
           <img

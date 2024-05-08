@@ -29,9 +29,6 @@ export async function GET(request: Request, { params }: { params: Params }) {
 
   try {
     const { token } = verifyToken(request)
-    // @ts-expect-error ts(2339)
-    // Property 'internalId' does not exist on type 'Self'.
-    // SDK is out of date
     const { internalId } = await getSelf(token)
 
     try {

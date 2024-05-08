@@ -8,18 +8,9 @@ import dbCollection from '@/lib/mongodb'
 type Data = {
   event: 'created' | 'updated' | 'deleted'
   id: string
-  integrationId: string
+  source: string
   record: DataRecord
 }
-
-// TODO: refactor this when scenario can use $.integration.key
-const integrationIdToKey = {
-  '662124cc836b33135b7565ca': 'box',
-  '66212406836b33135b7557a9': 'dropbox',
-  '66212406836b33135b7557ad': 'google-drive',
-  '662124cc836b33135b7565cf': 'onedrive',
-  '6622b0a7b565099ec49e25ea': 'microsoft-sharepoint',
-} as { [key: string]: string }
 
 export function verifyToken(request: Request) {
   const token = request.headers.get('x-integration-app-token')
@@ -48,7 +39,7 @@ export async function handleEvent(userId: string, model: string, data: Data) {
   const collection = await dbCollection(model)
   const commonFields = {
     env: process.env.NODE_ENV,
-    integrationKey: integrationIdToKey[data.integrationId] ?? 'unknown',
+    integrationKey: data.source,
     userId: userId,
     id: data.id,
   }
