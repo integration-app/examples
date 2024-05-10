@@ -117,6 +117,9 @@ export default function FileActions({ file }: { file: DataRecord }) {
     <div className='flex items-center'>
       <Button
         variant='outline'
+        onClick={() => {
+          downloadFile(file)
+        }}
         className={'rounded-r-none'}
         disabled={isDownloading(file)}
       >
