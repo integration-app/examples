@@ -67,19 +67,6 @@ export default function FileActions({ file }: { file: DataRecord }) {
   ) {
     const integrationApp = new IntegrationAppClient({ token: token })
     setDownloading((state: string[]) => [...state, file.id])
-    // const opRun = (await integrationApp
-    //   .connection(connection)
-    //   .operation('download-file')
-    //   // @ts-expect-error TS(2353): Object literal may only specify known properties, and 'fileId' does not exist in type 'OperationRunRequest'.
-    //   .run({ fileId: file.id, exportAs: exportAs })
-    //   .catch((error) => {
-    //     console.error(error)
-    //   })
-    //   .finally(() => {
-    //     setDownloading((state: string[]) =>
-    //       state.filter((id) => id !== file.id),
-    //     )
-    //   })) as { output: string }
     const actionRun = await integrationApp
       .actionInstance({
         parentKey: 'download-file',
