@@ -51,7 +51,7 @@ const googleExportTypes = {
     { pdf: 'application/pdf' },
     { jpg: 'image/jpeg' },
   ],
-}
+} as Record<string, { [key: string]: string }[]>
 
 export default function FileActions({ file }: { file: DataRecord }) {
   const { setOutput, setOutputOpen, downloading, setDownloading } = useContext(
