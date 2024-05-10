@@ -12,8 +12,3 @@ export interface Company {
   domain: string
   pushedInto: { [key: string]: any }
 }
-
-export interface Turtle {
-  name: string
-  badge_color: string
-}

@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken'
 import { NextResponse } from 'next/server'
 
+import { WORKSPACE_KEY, WORKSPACE_SECRET } from '@/lib/workspace'
+
 type Params = {
   uuid: string
 }
 
 export async function GET(request: Request, { params }: { params: Params }) {
-  const WORKSPACE_KEY = process.env.WORKSPACE_KEY || 'demo'
-  const WORKSPACE_SECRET = process.env.WORKSPACE_SECRET || 'demo'
   const uuid = params.uuid
 
   const tokenData = { id: uuid }

@@ -20,7 +20,7 @@ export default function TokenProvider({
 
     async function refreshToken() {
       const uuid = localStorage.getItem('uuid')
-      const res = await fetch(`/integration-token/${uuid}`)
+      const res = await fetch(`/api/integration-token/${uuid}`)
 
       if (res.ok) {
         const token = await res.json()

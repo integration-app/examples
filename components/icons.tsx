@@ -2,6 +2,7 @@ import {
   Eye,
   Blocks,
   ArrowUpFromLine,
+  ArrowDownToLine,
   Loader2,
   Plus,
   Settings,
@@ -12,6 +13,10 @@ import {
   CircleCheckBig,
   OctagonPause,
   CircleX,
+  AlignJustify,
+  LayoutGrid,
+  ChevronDown,
+  Braces,
 } from 'lucide-react'
 
 export const Icons = {
@@ -20,6 +25,7 @@ export const Icons = {
   spinner: Loader2,
   plus: Plus,
   push: ArrowUpFromLine,
+  pull: ArrowDownToLine,
   settings: Settings,
   script: ScrollText,
   trash: Trash,
@@ -28,4 +34,8 @@ export const Icons = {
   completed: CircleCheckBig,
   stopped: OctagonPause,
   failed: CircleX,
+  grid: LayoutGrid,
+  list: AlignJustify,
+  more: ChevronDown,
+  json: Braces,
 }
