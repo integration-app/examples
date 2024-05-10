@@ -15,6 +15,8 @@ import {
   CircleX,
   AlignJustify,
   LayoutGrid,
+  ChevronDown,
+  Braces,
 } from 'lucide-react'
 
 export const Icons = {
@@ -34,4 +36,6 @@ export const Icons = {
   failed: CircleX,
   grid: LayoutGrid,
   list: AlignJustify,
+  more: ChevronDown,
+  json: Braces,
 }

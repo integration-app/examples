@@ -19,7 +19,11 @@ import FilesList from './files-list'
 import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
 
-export function useFileUpdates(integration: string, importing: boolean, setImporting: Function) {
+export function useFileUpdates(
+  integration: string,
+  importing: boolean,
+  setImporting: Function,
+) {
   const token = useContext(TokenContext) as string
   const { files, setFiles } = useContext(FilesContext) as FilesContextType
 
@@ -65,10 +69,11 @@ export default function FilesPage({ params }: FlowPageProps) {
     'viewmode',
     'list',
   )
-  const [files, setFiles] = useFileUpdates(params.connection, importing, setImporting) as [
-    DataRecord[],
-    Function,
-  ]
+  const [files, setFiles] = useFileUpdates(
+    params.connection,
+    importing,
+    setImporting,
+  ) as [DataRecord[], Function]
 
   async function startImport() {
     setImporting(true)
