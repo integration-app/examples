@@ -67,16 +67,27 @@ export default function FileActions({ file }: { file: DataRecord }) {
   ) {
     const integrationApp = new IntegrationAppClient({ token: token })
     setDownloading((state: string[]) => [...state, file.id])
+
+    const payload = { fileId: file.id } as {
+      fileId: string
+      exportAs?: string
+    }
+
+    let addExtension = false
+    if (Object.keys(googleExportTypes).includes(file.unifiedFields?.mimeType)) {
+      addExtension = true
+      const opts = googleExportTypes[file.unifiedFields?.mimeType][0]
+      extension = extension ?? Object.keys(opts)[0]
+      payload['exportAs'] = exportAs || Object.values(opts)[0]
+    }
+
     const actionRun = await integrationApp
       .actionInstance({
         parentKey: 'download-file',
         integrationKey: connection,
         autoCreate: true,
       })
-      .run({
-        fileId: file.id,
-        exportAs: exportAs,
-      })
+      .run(payload)
       .catch((error) => {
         console.error(error)
       })
@@ -88,7 +99,7 @@ export default function FileActions({ file }: { file: DataRecord }) {
     if (actionRun) {
       const bytes = Buffer.from(actionRun.output, 'base64')
       const blob = new Blob([bytes], { type: 'application/octet-stream' })
-      saveAs(blob, extension ? `${file.name}.${extension}` : file.name)
+      saveAs(blob, addExtension ? `${file.name}.${extension}` : file.name)
     }
   }
 
@@ -134,9 +145,6 @@ export default function FileActions({ file }: { file: DataRecord }) {
         <DropdownMenuTrigger asChild>
           <Button
             variant='outline'
-            onClick={() => {
-              downloadFile(file)
-            }}
             className={'rounded-l-none border-l-0 px-2'}
             disabled={isDownloading(file)}
           >
