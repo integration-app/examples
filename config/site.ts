@@ -2,6 +2,7 @@ export const siteConfig = {
   name: 'Integration Scenarios',
   description:
     'Effortlessly integrate with the tools you already use. Here are a few scenarios to get you started.',
+  githubLink: 'https://github.com/integration-app/examples',
   scenarios: [
     {
       name: 'Push companies to a CRM',
