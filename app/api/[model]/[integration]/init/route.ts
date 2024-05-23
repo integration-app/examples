@@ -32,23 +32,21 @@ export async function POST(request: Request, { params }: { params: Params }) {
       })
 
       let records: DataRecord[] = []
-      let totalRecords: number = 0
       let cursor: string | null | undefined = null
 
       do {
         const actionRun = await actionInstance.run({ cursor })
-
-        if (records.length > 0) {
-          totalRecords += records.length
-          records = actionRun.output.records.map((record: DataRecord) => {
+        records.push(
+          ...actionRun.output.records.map((record: DataRecord) => {
             return { ...record, ...commonFields }
-          })
-
-          await collection.insertMany(records)
-        }
-
+          }),
+        )
         cursor = actionRun.output.cursor
-      } while (cursor && totalRecords <= 1000)
+      } while (cursor && records.length <= 1000)
+
+      if (records.length > 0) {
+        await collection.insertMany(records)
+      }
 
       return NextResponse.json({ records }, { status: 200 })
     } catch (error) {
