@@ -22,9 +22,8 @@ export default function FilesList({ files }: { files: DataRecord[] }) {
           <TableHead className='border-b-2 text-left text-xs font-medium uppercase tracking-wider'>
             Size
           </TableHead>
-          {files.findIndex(
-            (file) => file.fields?.createdTime !== undefined,
-          ) !== -1 ? (
+          {files.findIndex((file) => file.fields?.createdTime !== undefined) !==
+          -1 ? (
             <TableHead className='border-b-2 text-left text-xs font-medium uppercase tracking-wider'>
               Created Time
             </TableHead>
