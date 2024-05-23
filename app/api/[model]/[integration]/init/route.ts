@@ -21,24 +21,30 @@ export async function POST(request: Request, { params }: { params: Params }) {
       }
       const integrationApp = new IntegrationAppClient({ token: token })
 
-      const flowRun = await integrationApp
-        .flowInstance({
-          flowKey: process.env.NEXT_PUBLIC_FILE_IMPORT_FLOW_KEY,
-          integrationKey: integration,
-          autoCreate: true,
-        })
-        .run({
-          input: { model: model },
-        })
-      const outputs = await integrationApp
-        .flowRun(flowRun.id)
-        .getNodeOutputs('list-records')
-      const records = outputs.items[0].map((record: DataRecord) => {
-        return { ...record, ...commonFields, updatedAt: Date.now() }
+      await collection.deleteMany(commonFields)
+
+      const actionInstance = integrationApp.actionInstance({
+        parentKey: 'get-all-drive-items',
+        integrationKey: integration,
+        autoCreate: true,
       })
 
-      collection.deleteMany(commonFields)
-      collection.insertMany(records)
+      let records: DataRecord[] = []
+      let cursor: string | null | undefined = null
+
+      do {
+        const actionRun = await actionInstance.run({ cursor })
+        records.push(
+          ...actionRun.output.records.map((record: DataRecord) => {
+            return { ...record, ...commonFields }
+          }),
+        )
+        cursor = actionRun.output.cursor
+      } while (cursor && records.length <= 1000)
+
+      if (records.length > 0) {
+        await collection.insertMany(records)
+      }
 
       return NextResponse.json({ records }, { status: 200 })
     } catch (error) {

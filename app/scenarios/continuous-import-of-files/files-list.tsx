@@ -22,9 +22,13 @@ export default function FilesList({ files }: { files: DataRecord[] }) {
           <TableHead className='border-b-2 text-left text-xs font-medium uppercase tracking-wider'>
             Size
           </TableHead>
-          <TableHead className='border-b-2 text-left text-xs font-medium uppercase tracking-wider'>
-            Created Time
-          </TableHead>
+          {files.findIndex(
+            (file) => file.fields?.createdTime !== undefined,
+          ) !== -1 ? (
+            <TableHead className='border-b-2 text-left text-xs font-medium uppercase tracking-wider'>
+              Created Time
+            </TableHead>
+          ) : null}
           <TableHead />
         </TableRow>
       </TableHeader>
@@ -41,10 +45,12 @@ function FileRow({ file }: { file: DataRecord }) {
   return (
     <TableRow>
       <TableCell className='border-b'>{file.name}</TableCell>
-      <TableCell className='border-b'>{file.unifiedFields?.size}</TableCell>
-      <TableCell className='border-b'>
-        {file.unifiedFields?.createdTime ?? 'unknown'}
-      </TableCell>
+      <TableCell className='border-b'>{file.fields?.size}</TableCell>
+      {file.fields?.createdTime ? (
+        <TableCell className='border-b'>
+          {file.fields?.createdTime ?? 'unknown'}
+        </TableCell>
+      ) : null}
       <TableCell className='border-b text-right'>
         <FileActions file={file} />
       </TableCell>

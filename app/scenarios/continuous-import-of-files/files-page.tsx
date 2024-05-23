@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
-import { DataRecord, FlowRun, IntegrationAppClient } from '@integration-app/sdk'
+import { DataRecord } from '@integration-app/sdk'
 import ReactJson from '@microlink/react-json-view'
 import { useTheme } from 'next-themes'
+import { useSearchParams } from 'next/navigation'
 
 import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
 import { TokenContext } from '@/components/token-provider'
@@ -18,6 +19,7 @@ import FilesGrid from './files-grid'
 import FilesList from './files-list'
 import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
+import { Icons } from '@/components/icons'
 
 export function useFileUpdates(
   integration: string,
@@ -30,28 +32,26 @@ export function useFileUpdates(
   useEffect(() => {
     let interval: NodeJS.Timeout
 
-    if (importing) {
-      interval = setInterval(async () => {
-        const response = await fetch(`/api/files/${integration}`, {
-          headers: {
-            'x-integration-app-token': token,
-          },
-        })
-        const data = await response.json()
-        if (response.ok === false || !data.records) {
-          setImporting(false)
-          console.error(data)
+    interval = setInterval(async () => {
+      const response = await fetch(`/api/files/${integration}`, {
+        headers: {
+          'x-integration-app-token': token,
+        },
+      })
+      const data = await response.json()
+      if (response.ok === false || !data.records) {
+        setImporting(false)
+        console.error(data)
 
-          return
-        }
-        if (data.records.length > 0) {
-          setFiles(data.records)
-        }
-      }, 5000)
-    }
+        return
+      }
+      if (data.records.length > 0) {
+        setFiles(data.records)
+      }
+    }, 5000)
 
     return () => clearInterval(interval)
-  }, [importing, setImporting, integration, token, setFiles])
+  }, [setImporting, integration, token, setFiles])
 
   return [files, setFiles]
 }
@@ -74,6 +74,11 @@ export default function FilesPage({ params }: FlowPageProps) {
     importing,
     setImporting,
   ) as [DataRecord[], Function]
+  const searchParams = useSearchParams()
+  const folderId = searchParams.get('folderId')
+  const visibleFiles = folderId
+    ? files.filter((file) => file.fields?.folderId == folderId)
+    : files
 
   async function startImport() {
     setImporting(true)
@@ -85,17 +90,10 @@ export default function FilesPage({ params }: FlowPageProps) {
     })
     const data = await response.json()
     if (response.ok === false || !data.records) {
-      setImporting(false)
       console.error(data)
-
-      return
-    }
-    if (data.records.length > 0) {
+    } else if (data.records.length > 0) {
       setFiles(data.records)
     }
-  }
-
-  function stopImport() {
     setImporting(false)
   }
 
@@ -106,17 +104,12 @@ export default function FilesPage({ params }: FlowPageProps) {
           <h2 className='mr-4 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-slate-200 sm:text-4xl gap-6'>
             Files
           </h2>
-          {importing ? (
-            <Button
-              onClick={stopImport}
-              variant={'outline'}
-              className='align-left'
-            >
-              Stop import
-            </Button>
-          ) : (
-            <Button onClick={startImport}>Import</Button>
-          )}
+          <Button onClick={startImport} disabled={importing}>
+            {importing ? (
+              <Icons.spinner className='w-4 mr-3 animate-spin' />
+            ) : null}
+            Import
+          </Button>
         </div>
         <ViewModeToggle currentMode={viewMode} setMode={setViewMode} />
       </div>
@@ -147,11 +140,11 @@ export default function FilesPage({ params }: FlowPageProps) {
         </DialogContent>
       </Dialog>
       <>
-        {files?.length ? (
+        {visibleFiles?.length ? (
           viewMode === 'list' ? (
-            <FilesList files={files} />
+            <FilesList files={visibleFiles} />
           ) : (
-            <FilesGrid files={files} />
+            <FilesGrid files={visibleFiles} />
           )
         ) : (
           <section className='py-12'>Files will appear here.</section>

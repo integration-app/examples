@@ -1,12 +1,13 @@
 import { DataRecord } from '@integration-app/sdk'
 
 export function getFileType(file: DataRecord) {
-  if (file?.unifiedFields?.mimeType) {
-    const type = file?.unifiedFields?.mimeType.split('/')[0]
+  if (file.fields?.itemType == 'folder') return 'folder'
+  if (file.fields?.mimeType) {
+    const type = file?.fields?.mimeType.split('/')[0]
     if (['image', 'audio', 'video'].includes(type)) return type
   }
   const extension =
-    file?.unifiedFields?.name?.split('.')?.pop()?.toLowerCase() ?? 'bin'
+    file.fields?.name?.split('.')?.pop()?.toLowerCase() ?? 'bin'
   switch (extension) {
     case 'png':
     case 'jpg':

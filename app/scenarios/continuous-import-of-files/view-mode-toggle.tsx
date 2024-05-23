@@ -9,7 +9,7 @@ export default function ViewModeToggle({
   setMode: Function
 }) {
   return (
-    <Tabs defaultValue='list' value={currentMode}>
+    <Tabs defaultValue='grid' value={currentMode}>
       <TabsList className='inline-flex rounded-sm border-2 p-0'>
         <TabsTrigger value='grid' onClick={() => setMode('grid')}>
           <Icons.grid />

@@ -1,7 +1,12 @@
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { DataRecord, IntegrationAppClient } from '@integration-app/sdk'
 import { saveAs } from 'file-saver'
-import { useParams } from 'next/navigation'
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { TokenContext } from '@/components/token-provider'
@@ -60,6 +65,24 @@ export default function FileActions({ file }: { file: DataRecord }) {
   const { connection }: { connection: string } = useParams()
   const token = useContext(TokenContext)
 
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams],
+  )
+
+  function browseFolder(file: DataRecord) {
+    router.push(pathname + '?' + createQueryString('folderId', file.id))
+  }
+
   async function downloadFile(
     file: DataRecord,
     extension?: string,
@@ -74,9 +97,9 @@ export default function FileActions({ file }: { file: DataRecord }) {
     }
 
     let addExtension = false
-    if (Object.keys(googleExportTypes).includes(file.unifiedFields?.mimeType)) {
+    if (Object.keys(googleExportTypes).includes(file.fields?.mimeType)) {
       addExtension = true
-      const opts = googleExportTypes[file.unifiedFields?.mimeType][0]
+      const opts = googleExportTypes[file.fields?.mimeType][0]
       extension = extension ?? Object.keys(opts)[0]
       payload['exportAs'] = exportAs || Object.values(opts)[0]
     }
@@ -106,6 +129,17 @@ export default function FileActions({ file }: { file: DataRecord }) {
   const isDownloading = (file: DataRecord) => {
     return downloading.includes(file.id)
   }
+
+  const browseButton = (
+    <Button
+      variant='outline'
+      onClick={() => {
+        browseFolder(file)
+      }}
+    >
+      Browse
+    </Button>
+  )
 
   const downloadButton = (
     <Button
@@ -157,8 +191,8 @@ export default function FileActions({ file }: { file: DataRecord }) {
           className='min-w-4rem w-4rem'
           forceMount
         >
-          {file.unifiedFields &&
-            googleExportTypes[file.unifiedFields.mimeType]
+          {file.fields &&
+            googleExportTypes[file.fields.mimeType]
               ?.slice(1)
               ?.map((opts, index) => {
                 const extenstion = Object.keys(opts)[0]
@@ -194,10 +228,12 @@ export default function FileActions({ file }: { file: DataRecord }) {
       ) : (
         ''
       )}
-      {Object.keys(googleExportTypes).includes(file.unifiedFields?.mimeType) &&
-      googleExportTypes[file.unifiedFields?.mimeType].length > 1
-        ? downloadSplitButton
-        : downloadButton}
+      {file.fields?.itemType === 'file'
+        ? Object.keys(googleExportTypes).includes(file.fields?.mimeType) &&
+          googleExportTypes[file.fields?.mimeType].length > 1
+          ? downloadSplitButton
+          : downloadButton
+        : browseButton}
     </div>
   )
 }

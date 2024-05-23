@@ -8,11 +8,11 @@ import FileActions from './file-actions'
 export default function FileCard({ file }: { file: DataRecord }) {
   return (
     <Card className='sm:w-full md:w-72 h-72 overflow-hidden relative'>
-      {file?.unifiedFields?.previewUri ? (
+      {file?.fields?.previewUri ? (
         <div className='p-2 flex items-center justify-bottom'>
           <img
             className='w-full rounded-sm inline-flex'
-            src={file?.unifiedFields?.previewUri}
+            src={file?.fields?.previewUri}
             alt={file.name}
             width={250}
           />

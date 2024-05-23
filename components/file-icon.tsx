@@ -7,6 +7,7 @@ import {
   FileSpreadsheet,
   FileText,
   FileVideo,
+  Folder,
 } from 'lucide-react'
 
 import { getFileType } from '@/lib/filetypes'
@@ -19,6 +20,7 @@ export const fileTypeIcons = {
   document: { fileIcon: <FileText />, bgColor: 'bg-blue-500' },
   spreadsheet: { fileIcon: <FileSpreadsheet />, bgColor: 'bg-green-600' },
   unknown: { fileIcon: <File />, bgColor: 'bg-amber-600' },
+  folder: { fileIcon: <Folder />, bgColor: 'bg-zinc-500' },
 } as { [key: string]: any }
 
 export default function FileIcon({ file }: { file: DataRecord }) {

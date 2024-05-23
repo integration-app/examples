@@ -15,7 +15,7 @@ export const siteConfig = {
       name: 'Continuous import of files',
       description: 'Continuously import files from any storage connected',
       slug: 'continuous-import-of-files',
-      flowKey: process.env.NEXT_PUBLIC_FILE_IMPORT_FLOW_KEY,
+      flowKey: 'continuous-import-of-files-to-my-app',
       disabled: false,
     },
   ],
