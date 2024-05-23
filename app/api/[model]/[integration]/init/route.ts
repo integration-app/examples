@@ -5,6 +5,8 @@ import dbCollection from '@/lib/mongodb'
 import { getSelf, verifyToken, handleError } from '@/app/api/utils'
 import type { Params } from '../route'
 
+export const maxDuration = 60
+
 export async function POST(request: Request, { params }: { params: Params }) {
   const { model, integration } = params
 
