@@ -15,7 +15,7 @@ export const siteConfig = {
       name: 'Continuous import of files',
       description: 'Continuously import files from any storage connected',
       slug: 'continuous-import-of-files',
-      flowKey: 'continuous-import-of-files-to-my-app',
+      flowKey: 'get-drive-item-events',
       disabled: false,
     },
   ],
