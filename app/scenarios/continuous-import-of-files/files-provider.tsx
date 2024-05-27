@@ -6,6 +6,8 @@ export const FilesContext = React.createContext({})
 export interface FilesContextType {
   files: DataRecord[]
   setFiles: (_: DataRecord[]) => void
+  path: DataRecord[]
+  setPath: (_: Function | DataRecord[]) => void
   output: object
   setOutput: (_: object) => void
   outputOpen: boolean
@@ -20,6 +22,7 @@ export default function FilesProvider({
   children: React.ReactNode
 }) {
   const [files, setFiles] = useState<DataRecord[]>([])
+  const [path, setPath] = useState<DataRecord[]>([])
   const [output, setOutput] = useState({})
   const [outputOpen, setOutputOpen] = useState(false)
   const [downloading, setDownloading] = useState<string[]>([])
@@ -29,6 +32,8 @@ export default function FilesProvider({
       value={{
         files,
         setFiles,
+        path,
+        setPath,
         output,
         setOutput,
         outputOpen,

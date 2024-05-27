@@ -67,7 +67,7 @@ export default function FilesPage({ params }: FlowPageProps) {
 
   const [viewMode, setViewMode] = useLocalStorage<'list' | 'grid'>(
     'viewmode',
-    'list',
+    'grid',
   )
   const [files, setFiles] = useFileUpdates(
     params.connection,
@@ -77,7 +77,10 @@ export default function FilesPage({ params }: FlowPageProps) {
   const searchParams = useSearchParams()
   const folderId = searchParams.get('folderId')
   const visibleFiles = folderId
-    ? files.filter((file) => file.fields?.folderId == folderId)
+    ? [
+        { id: '', fields: { itemType: 'parent' } },
+        ...files.filter((file) => file.fields?.folderId == folderId),
+      ]
     : files
 
   async function startImport() {
@@ -139,17 +142,15 @@ export default function FilesPage({ params }: FlowPageProps) {
           </div>
         </DialogContent>
       </Dialog>
-      <>
-        {visibleFiles?.length ? (
-          viewMode === 'list' ? (
-            <FilesList files={visibleFiles} />
-          ) : (
-            <FilesGrid files={visibleFiles} />
-          )
+      {visibleFiles?.length ? (
+        viewMode === 'list' ? (
+          <FilesList files={visibleFiles} />
         ) : (
-          <section className='py-12'>Files will appear here.</section>
-        )}
-      </>
+          <FilesGrid files={visibleFiles} />
+        )
+      ) : (
+        <section className='py-12'>Files will appear here.</section>
+      )}
     </>
   )
 }

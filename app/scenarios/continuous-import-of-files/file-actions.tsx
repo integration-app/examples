@@ -59,9 +59,14 @@ const googleExportTypes = {
 } as Record<string, { [key: string]: string }[]>
 
 export default function FileActions({ file }: { file: DataRecord }) {
-  const { setOutput, setOutputOpen, downloading, setDownloading } = useContext(
-    FilesContext,
-  ) as FilesContextType
+  const {
+    path,
+    setPath,
+    setOutput,
+    setOutputOpen,
+    downloading,
+    setDownloading,
+  } = useContext(FilesContext) as FilesContextType
   const { connection }: { connection: string } = useParams()
   const token = useContext(TokenContext)
 
@@ -72,7 +77,11 @@ export default function FileActions({ file }: { file: DataRecord }) {
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
-      params.set(name, value)
+      if (value !== '') {
+        params.set(name, value)
+      } else {
+        params.delete(name)
+      }
 
       return params.toString()
     },
@@ -80,7 +89,17 @@ export default function FileActions({ file }: { file: DataRecord }) {
   )
 
   function browseFolder(file: DataRecord) {
+    setPath((state: DataRecord[]) => [...state, file])
     router.push(pathname + '?' + createQueryString('folderId', file.id))
+  }
+
+  function browseParentFolder() {
+    setPath((state: DataRecord[]) => state.slice(0, state.length - 1))
+    router.push(
+      pathname +
+        '?' +
+        createQueryString('folderId', path[path.length - 2]?.id ?? ''),
+    )
   }
 
   async function downloadFile(
@@ -138,6 +157,16 @@ export default function FileActions({ file }: { file: DataRecord }) {
       }}
     >
       Browse
+    </Button>
+  )
+  const browseParentButton = (
+    <Button
+      variant='outline'
+      onClick={() => {
+        browseParentFolder()
+      }}
+    >
+      Go to parent folder
     </Button>
   )
 
@@ -228,12 +257,14 @@ export default function FileActions({ file }: { file: DataRecord }) {
       ) : (
         ''
       )}
-      {file.fields?.itemType === 'file'
-        ? Object.keys(googleExportTypes).includes(file.fields?.mimeType) &&
-          googleExportTypes[file.fields?.mimeType].length > 1
-          ? downloadSplitButton
-          : downloadButton
-        : browseButton}
+      {file.fields?.itemType === 'parent'
+        ? browseParentButton
+        : file.fields?.itemType === 'file'
+          ? Object.keys(googleExportTypes).includes(file.fields?.mimeType) &&
+            googleExportTypes[file.fields?.mimeType].length > 1
+            ? downloadSplitButton
+            : downloadButton
+          : browseButton}
     </div>
   )
 }
