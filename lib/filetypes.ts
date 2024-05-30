@@ -7,7 +7,7 @@ export function getFileType(file: DataRecord) {
     const type = file?.fields?.mimeType.split('/')[0]
     if (['image', 'audio', 'video'].includes(type)) return type
   }
-  const extension = file.fields?.name?.split('.')?.pop()?.toLowerCase() ?? 'bin'
+  const extension = file.name?.split('.')?.pop()?.toLowerCase() ?? 'bin'
   switch (extension) {
     case 'png':
     case 'jpg':
