@@ -14,6 +14,8 @@ export interface FilesContextType {
   setOutputOpen: (_: boolean) => void
   downloading: string[]
   setDownloading: (_: Function | string[]) => void
+  syncPanelOpen: boolean
+  setSyncPanelOpen: (_: boolean) => void
 }
 
 export default function FilesProvider({
@@ -26,6 +28,7 @@ export default function FilesProvider({
   const [output, setOutput] = useState({})
   const [outputOpen, setOutputOpen] = useState(false)
   const [downloading, setDownloading] = useState<string[]>([])
+  const [syncPanelOpen, setSyncPanelOpen] = useState(false)
 
   return (
     <FilesContext.Provider
@@ -40,6 +43,8 @@ export default function FilesProvider({
         setOutputOpen,
         downloading,
         setDownloading,
+        syncPanelOpen,
+        setSyncPanelOpen,
       }}
     >
       {children}

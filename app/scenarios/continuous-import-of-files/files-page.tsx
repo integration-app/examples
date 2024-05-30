@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
-import { DataRecord } from '@integration-app/sdk'
+import { DataRecord, FlowInstance } from '@integration-app/sdk'
+import { useIntegrationApp } from '@integration-app/react'
 import ReactJson from '@microlink/react-json-view'
 import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
@@ -20,6 +21,7 @@ import FilesList from './files-list'
 import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
 import { Icons } from '@/components/icons'
+import ExternalSyncPanel from '@/components/external-sync-panel'
 
 export function useFileUpdates(
   integration: string,
@@ -59,11 +61,11 @@ export function useFileUpdates(
 export default function FilesPage({ params }: FlowPageProps) {
   const token = useContext(TokenContext) as string
   const themeData = useTheme()
+  const integrationApp = useIntegrationApp()
 
   const [importing, setImporting] = useState(false)
-  const { output, outputOpen, setOutputOpen } = useContext(
-    FilesContext,
-  ) as FilesContextType
+  const { outputOpen, setOutputOpen, syncPanelOpen, setSyncPanelOpen } =
+    useContext(FilesContext) as FilesContextType
 
   const [viewMode, setViewMode] = useLocalStorage<'list' | 'grid'>(
     'viewmode',
@@ -89,6 +91,10 @@ export default function FilesPage({ params }: FlowPageProps) {
 
   async function startImport() {
     setImporting(true)
+    await integrationApp
+      .connection(params.connection)
+      .flow('get-drive-item-events')
+      .patch({ enabled: true })
     const response = await fetch(`/api/files/${params.connection}/init`, {
       method: 'POST',
       headers: {
@@ -104,6 +110,25 @@ export default function FilesPage({ params }: FlowPageProps) {
     setImporting(false)
   }
 
+  const [flowInstance, setFlowInstance] = useState<FlowInstance | null>(null)
+
+  useEffect(() => {
+    startImport()
+
+    const fetchFlowInstance = async () => {
+      const flowInstance = await integrationApp
+        .flowInstance({
+          flowKey: 'get-drive-item-events',
+          integrationKey: params.connection,
+        })
+        .get()
+
+      setFlowInstance(flowInstance)
+    }
+
+    fetchFlowInstance()
+  }, [])
+
   return (
     <>
       <div className='flex justify-between items-center w-full mt-2 mb-4'>
@@ -113,13 +138,25 @@ export default function FilesPage({ params }: FlowPageProps) {
           </h2>
           <Button onClick={startImport} disabled={importing}>
             {importing ? (
-              <Icons.spinner className='w-4 mr-3 animate-spin' />
-            ) : null}
-            Import
+              <>
+                <Icons.spinner className='w-4 mr-3 animate-spin' />
+                Importing
+              </>
+            ) : (
+              'Re-import all files'
+            )}
+          </Button>
+          <Button
+            onClick={() => setSyncPanelOpen(!syncPanelOpen)}
+            variant='link'
+            className='ml-4'
+          >
+            Updates {syncPanelOpen ? '▲' : '▼'}
           </Button>
         </div>
         <ViewModeToggle currentMode={viewMode} setMode={setViewMode} />
       </div>
+      {syncPanelOpen && <ExternalSyncPanel flowInstance={flowInstance} />}
       <Dialog modal={false} open={outputOpen} onOpenChange={setOutputOpen}>
         <DialogContent className='md:w-max md:max-w-fit sm:max-w-screen overflow-hidden'>
           <DialogHeader>

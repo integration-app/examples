@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
-import { DataRecord, IntegrationAppClient } from '@integration-app/sdk'
+import { DataRecord } from '@integration-app/sdk'
+import { useIntegrationApp } from '@integration-app/react'
 import { saveAs } from 'file-saver'
 import {
   useParams,
@@ -9,7 +10,6 @@ import {
 } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { TokenContext } from '@/components/token-provider'
 import { FilesContext, FilesContextType } from './files-provider'
 import { Icons } from '@/components/icons'
 import {
@@ -68,11 +68,11 @@ export default function FileActions({ file }: { file: DataRecord }) {
     setDownloading,
   } = useContext(FilesContext) as FilesContextType
   const { connection }: { connection: string } = useParams()
-  const token = useContext(TokenContext)
 
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const integrationApp = useIntegrationApp()
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -107,7 +107,6 @@ export default function FileActions({ file }: { file: DataRecord }) {
     extension?: string,
     exportAs?: string,
   ) {
-    const integrationApp = new IntegrationAppClient({ token: token })
     setDownloading((state: string[]) => [...state, file.id])
 
     const payload = { fileId: file.id } as {
