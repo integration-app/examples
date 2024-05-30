@@ -156,7 +156,9 @@ export default function FilesPage({ params }: FlowPageProps) {
         </div>
         <ViewModeToggle currentMode={viewMode} setMode={setViewMode} />
       </div>
-      {syncPanelOpen && <ExternalSyncPanel flowInstance={flowInstance} />}
+      {syncPanelOpen && flowInstance && (
+        <ExternalSyncPanel flowInstance={flowInstance} />
+      )}
       <Dialog modal={false} open={outputOpen} onOpenChange={setOutputOpen}>
         <DialogContent className='md:w-max md:max-w-fit sm:max-w-screen overflow-hidden'>
           <DialogHeader>
