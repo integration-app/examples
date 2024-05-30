@@ -259,12 +259,12 @@ export default function FileActions({ file }: { file: DataRecord }) {
       )}
       {file.fields?.itemType === 'parent'
         ? browseParentButton
-        : file.fields?.itemType === 'file'
-          ? Object.keys(googleExportTypes).includes(file.fields?.mimeType) &&
-            googleExportTypes[file.fields?.mimeType].length > 1
+        : file.fields?.itemType === 'folder'
+          ? browseButton
+          : Object.keys(googleExportTypes).includes(file.fields?.mimeType) &&
+              googleExportTypes[file.fields?.mimeType].length > 1
             ? downloadSplitButton
-            : downloadButton
-          : browseButton}
+            : downloadButton}
     </div>
   )
 }

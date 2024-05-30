@@ -1,8 +1,8 @@
 import { DataRecord } from '@integration-app/sdk'
 
 export function getFileType(file: DataRecord) {
-  if (file.fields?.itemType == 'folder') return 'folder'
-  if (file.fields?.itemType == 'parent') return 'parent'
+  if (file.fields?.itemType === 'folder') return 'folder'
+  if (file.fields?.itemType === 'parent') return 'parent'
   if (file.fields?.mimeType) {
     const type = file?.fields?.mimeType.split('/')[0]
     if (['image', 'audio', 'video'].includes(type)) return type

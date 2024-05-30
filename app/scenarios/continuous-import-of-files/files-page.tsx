@@ -79,9 +79,13 @@ export default function FilesPage({ params }: FlowPageProps) {
   const visibleFiles = folderId
     ? [
         { id: '', fields: { itemType: 'parent' } },
-        ...files.filter((file) => file.fields?.folderId == folderId),
+        ...files.filter(
+          (file) =>
+            file.fields?.hasOwnProperty('folderId') &&
+            file.fields?.folderId === folderId,
+        ),
       ]
-    : files
+    : files.filter((file) => !file.fields?.hasOwnProperty('folderId'))
 
   async function startImport() {
     setImporting(true)
@@ -142,6 +146,11 @@ export default function FilesPage({ params }: FlowPageProps) {
           </div>
         </DialogContent>
       </Dialog>
+      {files.length === 1000 && (
+        <div className='mb-4'>
+          For demo purposes the list is limited by 1000 items.
+        </div>
+      )}
       {visibleFiles?.length ? (
         viewMode === 'list' ? (
           <FilesList files={visibleFiles} />
