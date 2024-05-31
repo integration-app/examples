@@ -18,9 +18,9 @@ export default function ExternalSyncPanel({
 }) {
   const externalEventSubscriptions = useExternalEventSubscriptions({
     integrationId: flowInstance.integrationId,
-  })
-  const eventTypes = externalEventSubscriptions.items.map(
-    (item) => item.config?.type,
+  }).items as unknown as ExternalEventSubscription[]
+  const eventTypes = externalEventSubscriptions.map(
+    (sub) => sub.config?.type as string,
   )
   const [syncPanelTab, setSyncPanelTab] = useState(eventTypes[0])
   const integrationApp = useIntegrationApp()
@@ -52,7 +52,7 @@ export default function ExternalSyncPanel({
         {eventTypes.map((value, index) => (
           <TabsContent key={index} value={value}>
             <Card className='px-6 py-4'>
-              {externalEventSubscriptions.items
+              {externalEventSubscriptions
                 .filter((sub) => sub.config?.type === value)
                 .map((sub, index) => (
                   <div

@@ -64,7 +64,7 @@ export default function FilesPage({ params }: FlowPageProps) {
   const integrationApp = useIntegrationApp()
 
   const [importing, setImporting] = useState(false)
-  const { outputOpen, setOutputOpen, syncPanelOpen, setSyncPanelOpen } =
+  const { output, outputOpen, setOutputOpen, syncPanelOpen, setSyncPanelOpen } =
     useContext(FilesContext) as FilesContextType
 
   const [viewMode, setViewMode] = useLocalStorage<'list' | 'grid'>(

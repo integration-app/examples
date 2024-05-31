@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.2",
-    "@integration-app/react": "^0.3.12",
-    "@integration-app/sdk": "^0.17.2",
+    "@integration-app/react": "^1.0.1",
+    "@integration-app/sdk": "^1.2.0",
     "@microlink/react-json-view": "^1.23.0",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",
