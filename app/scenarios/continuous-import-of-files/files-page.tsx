@@ -136,7 +136,7 @@ export default function FilesPage({ params }: FlowPageProps) {
           <h2 className='mr-4 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-slate-200 sm:text-4xl gap-6'>
             Files
           </h2>
-          <Button onClick={startImport} disabled={importing}>
+          <Button variant='outline' onClick={startImport} disabled={importing}>
             {importing ? (
               <>
                 <Icons.spinner className='w-4 mr-3 animate-spin' />
@@ -148,10 +148,10 @@ export default function FilesPage({ params }: FlowPageProps) {
           </Button>
           <Button
             onClick={() => setSyncPanelOpen(!syncPanelOpen)}
-            variant='link'
+            variant='ghost'
             className='ml-4'
           >
-            Updates {syncPanelOpen ? '▲' : '▼'}
+            Updates {syncPanelOpen ? '▼' : '►'}
           </Button>
         </div>
         <ViewModeToggle currentMode={viewMode} setMode={setViewMode} />

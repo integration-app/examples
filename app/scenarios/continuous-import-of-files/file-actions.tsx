@@ -90,7 +90,9 @@ export default function FileActions({ file }: { file: DataRecord }) {
 
   function browseFolder(file: DataRecord) {
     setPath((state: DataRecord[]) => [...state, file])
-    router.push(pathname + '?' + createQueryString('folderId', file.id))
+    router.push(
+      pathname + '?' + createQueryString('folderId', file?.fields?.id),
+    )
   }
 
   function browseParentFolder() {
@@ -227,6 +229,7 @@ export default function FileActions({ file }: { file: DataRecord }) {
                 const mimeType = opts[extenstion]
                 return (
                   <DropdownMenuItem
+                    className='cursor-pointer'
                     key={index}
                     onClick={() => {
                       downloadFile(file, extenstion, mimeType)
