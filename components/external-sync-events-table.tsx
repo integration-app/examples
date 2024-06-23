@@ -6,20 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import dynamic from 'next/dynamic'
-import { useTheme } from 'next-themes'
-
-const ReactJson = dynamic(() => import('@microlink/react-json-view'), {
-  ssr: false,
-})
+import JsonViewer from '@/components/json-viewer'
 
 export default function ExternalSyncEventsTable({
   events,
 }: {
   events: ExternalEventLogRecord[]
 }) {
-  const themeData = useTheme()
-
   return (
     <Table className='min-w-full leading-normal'>
       <TableHeader>
@@ -35,25 +28,7 @@ export default function ExternalSyncEventsTable({
               <TableCell>{event.id}</TableCell>
               <TableCell>
                 <div className='overflow-auto max-h-80'>
-                  <ReactJson
-                    src={event.payload}
-                    name={false}
-                    collapsed={1}
-                    quotesOnKeys={false}
-                    enableClipboard={false}
-                    displayDataTypes={false}
-                    displayObjectSize={false}
-                    iconStyle='square'
-                    style={{
-                      padding: 8,
-                      backgroundColor: 'transparent',
-                    }}
-                    theme={
-                      themeData.resolvedTheme === 'light'
-                        ? 'rjv-default'
-                        : 'harmonic'
-                    }
-                  />
+                  <JsonViewer json={event.payload} />
                 </div>
               </TableCell>
             </TableRow>

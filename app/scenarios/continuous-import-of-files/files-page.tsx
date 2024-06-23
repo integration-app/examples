@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { DataRecord, FlowInstance } from '@integration-app/sdk'
 import { useIntegrationApp } from '@integration-app/react'
-import dynamic from 'next/dynamic'
-import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
 
 import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
@@ -22,10 +20,7 @@ import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
 import { Icons } from '@/components/icons'
 import ExternalSyncPanel from '@/components/external-sync-panel'
-
-const ReactJson = dynamic(() => import('@microlink/react-json-view'), {
-  ssr: false,
-})
+import JsonViewer from '@/components/json-viewer'
 
 export function useFileUpdates(
   integration: string,
@@ -74,7 +69,6 @@ export function useFileUpdates(
 
 export default function FilesPage({ params }: FlowPageProps) {
   const token = useContext(TokenContext) as string
-  const themeData = useTheme()
   const integrationApp = useIntegrationApp()
 
   const [importing, setImporting] = useState(false)
@@ -180,20 +174,7 @@ export default function FilesPage({ params }: FlowPageProps) {
             </DialogDescription>
           </DialogHeader>
           <div className='overflow-auto max-h-80'>
-            <ReactJson
-              src={output}
-              name={false}
-              collapsed={1}
-              quotesOnKeys={false}
-              enableClipboard={false}
-              displayDataTypes={false}
-              displayObjectSize={false}
-              iconStyle='square'
-              style={{ padding: 8, backgroundColor: 'transparent' }}
-              theme={
-                themeData.resolvedTheme === 'light' ? 'rjv-default' : 'harmonic'
-              }
-            />
+            <JsonViewer json={output} />
           </div>
         </DialogContent>
       </Dialog>
