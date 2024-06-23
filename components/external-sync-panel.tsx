@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   ExternalEventLogRecord,
   ExternalEventSubscription,
@@ -11,6 +11,7 @@ import {
 import { toSentenceCase } from 'js-convert-case'
 import { formatDistanceToNow } from 'date-fns'
 import { Webhook, WebhookOff } from 'lucide-react'
+import { useInterval } from 'usehooks-ts'
 
 import {
   Card,
@@ -19,7 +20,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import ExternalSyncEventsTable from '@/components/external-sync-events-table'
+import { useExternalEventLogRecords } from '@/lib/hooks/_to-move-to-sdk'
 
 export default function ExternalSyncPanel({
   flowInstance,
@@ -27,46 +30,25 @@ export default function ExternalSyncPanel({
   flowInstance: FlowInstance
 }) {
   const {
-    items: initialSubscriptions,
+    items: subscriptions,
     refresh: refreshSubscriptions,
     refreshing: refreshingSubscriptions,
   } = useExternalEventSubscriptions({
-    integrationId: flowInstance.integrationId,
+    connectionId: flowInstance.connectionId,
   })
-  const [subscriptions, setSubscriptions] = useState<
-    ExternalEventSubscription[]
-  >([])
+  const { items: events, refresh: refreshEvents } = useExternalEventLogRecords({
+    connectionId: flowInstance.connectionId,
+  })
   const [pullingUpdates, setPullingUpdates] = useState<string[]>([])
-  const [events, setEvents] = useState<ExternalEventLogRecord[]>([])
   const integrationApp = useIntegrationApp()
 
   async function pullUpdates(sub: ExternalEventSubscription) {
     setPullingUpdates((state) => [...state, sub.id])
     await integrationApp.externalEventSubscription(sub.id).pullEvents()
-    refreshSubscriptions()
+    await refreshSubscriptions()
+    await refreshEvents()
     setPullingUpdates((state) => state.filter((i) => i !== sub.id))
   }
-
-  async function loadEvents() {
-    const data = await integrationApp.get(`/external-event-log-records`)
-    setEvents(data.items)
-  }
-
-  useEffect(() => {
-    setSubscriptions(initialSubscriptions)
-  }, [refreshingSubscriptions, pullingUpdates])
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-
-    loadEvents()
-
-    interval = setInterval(async () => {
-      await loadEvents()
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
 
   function pullUpdatesButton(sub: ExternalEventSubscription) {
     if (sub.isRealTime || sub.status === 'error') return
@@ -83,15 +65,20 @@ export default function ExternalSyncPanel({
     )
   }
 
-  useEffect(() => {
+  function timeToNextUpdate(sub: ExternalEventSubscription) {
+    if (!sub.nextPullEventsTimestamp) return 0
+    const now = Date.now()
+    const delta = new Date(sub.nextPullEventsTimestamp).getTime() - now
+    return delta
+  }
+
+  useInterval(() => {
     if (refreshingSubscriptions) return
 
     const fetchSubscriptionsWithDueUpdates = async () => {
       const now = Date.now()
       const dueSubscriptions = subscriptions.filter(
-        (sub) =>
-          sub.nextPullEventsTimestamp &&
-          new Date(sub.nextPullEventsTimestamp).getTime() < now,
+        (sub) => timeToNextUpdate(sub) < 0,
       )
 
       for (const sub of dueSubscriptions) {
@@ -100,7 +87,7 @@ export default function ExternalSyncPanel({
     }
 
     fetchSubscriptionsWithDueUpdates()
-  }, [new Date().getSeconds()])
+  }, 1000)
 
   return (
     <Card className='flex flex-col space-y-8 lg:flex-row lg:space-y-0 overflow-auto mb-4'>
@@ -119,7 +106,7 @@ export default function ExternalSyncPanel({
           <Card key={sub.id} className='m-4 p-2'>
             <CardHeader className='py-2 px-4'>
               <CardTitle className='text-md'>
-                {toSentenceCase(sub.config?.type as string)}
+                {sub.config?.type && toSentenceCase(sub.config.type)}
                 {pullUpdatesButton(sub)}
               </CardTitle>
               {sub.isRealTime ? (
@@ -135,6 +122,20 @@ export default function ExternalSyncPanel({
                     addSuffix: true,
                     includeSeconds: true,
                   })}
+                  {sub.pullUpdatesIntervalSeconds &&
+                    sub.fullSyncIntervalSeconds && (
+                      <Progress
+                        className='mt-4 h-1 b-0'
+                        value={
+                          (timeToNextUpdate(sub) /
+                            1000 /
+                            (sub.requiresFullSync === true
+                              ? sub.fullSyncIntervalSeconds
+                              : sub.pullUpdatesIntervalSeconds)) *
+                          100
+                        }
+                      ></Progress>
+                    )}
                 </div>
               ) : (
                 <div>No scheduled updates</div>
@@ -154,7 +155,7 @@ export default function ExternalSyncPanel({
           </Card>
         ))}
       </aside>
-      <div className='flex-1 lg:w-3/5'>
+      <div className='flex-1 lg:w-3/5 overflow-auto max-h-[640px]'>
         {events?.length > 0 ? (
           <ExternalSyncEventsTable events={events} />
         ) : (

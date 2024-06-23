@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { DataRecord, FlowInstance } from '@integration-app/sdk'
 import { useIntegrationApp } from '@integration-app/react'
-import ReactJson from '@microlink/react-json-view'
+import dynamic from 'next/dynamic'
 import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
 
@@ -22,6 +22,10 @@ import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
 import { Icons } from '@/components/icons'
 import ExternalSyncPanel from '@/components/external-sync-panel'
+
+const ReactJson = dynamic(() => import('@microlink/react-json-view'), {
+  ssr: false,
+})
 
 export function useFileUpdates(
   integration: string,

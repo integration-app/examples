@@ -6,8 +6,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import ReactJson from '@microlink/react-json-view'
+import dynamic from 'next/dynamic'
 import { useTheme } from 'next-themes'
+
+const ReactJson = dynamic(() => import('@microlink/react-json-view'), {
+  ssr: false,
+})
 
 export default function ExternalSyncEventsTable({
   events,
