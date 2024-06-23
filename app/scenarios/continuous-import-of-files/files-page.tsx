@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { DataRecord, FlowInstance } from '@integration-app/sdk'
 import { useIntegrationApp } from '@integration-app/react'
-import ReactJson from '@microlink/react-json-view'
-import { useTheme } from 'next-themes'
 import { useSearchParams } from 'next/navigation'
 
 import { FlowPageProps } from '@/app/[scenario]/[connection]/page'
@@ -22,6 +20,7 @@ import { FilesContext, FilesContextType } from './files-provider'
 import ViewModeToggle from './view-mode-toggle'
 import { Icons } from '@/components/icons'
 import ExternalSyncPanel from '@/components/external-sync-panel'
+import JsonViewer from '@/components/json-viewer'
 
 export function useFileUpdates(
   integration: string,
@@ -32,9 +31,7 @@ export function useFileUpdates(
   const { files, setFiles } = useContext(FilesContext) as FilesContextType
 
   useEffect(() => {
-    let interval: NodeJS.Timeout
-
-    interval = setInterval(async () => {
+    async function loadFiles() {
       const response = await fetch(`/api/files/${integration}`, {
         headers: {
           'x-integration-app-token': token,
@@ -49,8 +46,20 @@ export function useFileUpdates(
       }
       if (data.records.length > 0) {
         setFiles(data.records)
+      } else {
+        // startImport()
       }
-    }, 5000)
+    }
+
+    loadFiles()
+
+    let interval: NodeJS.Timeout
+
+    if (!importing) {
+      interval = setInterval(async () => {
+        loadFiles()
+      }, 5000)
+    }
 
     return () => clearInterval(interval)
   }, [setImporting, integration, token, setFiles])
@@ -60,7 +69,6 @@ export function useFileUpdates(
 
 export default function FilesPage({ params }: FlowPageProps) {
   const token = useContext(TokenContext) as string
-  const themeData = useTheme()
   const integrationApp = useIntegrationApp()
 
   const [importing, setImporting] = useState(false)
@@ -113,8 +121,6 @@ export default function FilesPage({ params }: FlowPageProps) {
   const [flowInstance, setFlowInstance] = useState<FlowInstance | null>(null)
 
   useEffect(() => {
-    startImport()
-
     const fetchFlowInstance = async () => {
       const flowInstance = await integrationApp
         .flowInstance({
@@ -168,20 +174,7 @@ export default function FilesPage({ params }: FlowPageProps) {
             </DialogDescription>
           </DialogHeader>
           <div className='overflow-auto max-h-80'>
-            <ReactJson
-              src={output}
-              name={false}
-              collapsed={1}
-              quotesOnKeys={false}
-              enableClipboard={false}
-              displayDataTypes={false}
-              displayObjectSize={false}
-              iconStyle='square'
-              style={{ padding: 8, backgroundColor: 'transparent' }}
-              theme={
-                themeData.resolvedTheme === 'light' ? 'rjv-default' : 'harmonic'
-              }
-            />
+            <JsonViewer json={output} />
           </div>
         </DialogContent>
       </Dialog>

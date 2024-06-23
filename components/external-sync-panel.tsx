@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   ExternalEventLogRecord,
   ExternalEventSubscription,
@@ -9,157 +9,159 @@ import {
   useIntegrationApp,
 } from '@integration-app/react'
 import { toSentenceCase } from 'js-convert-case'
-import { formatDistanceToNow, set } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
+import { Webhook, WebhookOff } from 'lucide-react'
+import { useInterval } from 'usehooks-ts'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card } from '@/components/ui/card'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table'
-import { useTheme } from 'next-themes'
-import ReactJson from '@microlink/react-json-view'
+import { Progress } from '@/components/ui/progress'
+import ExternalSyncEventsTable from '@/components/external-sync-events-table'
+import { useExternalEventLogRecords } from '@/lib/hooks/_to-move-to-sdk'
 
 export default function ExternalSyncPanel({
   flowInstance,
 }: {
   flowInstance: FlowInstance
 }) {
-  const externalEventSubscriptions = useExternalEventSubscriptions({
-    integrationId: flowInstance.integrationId,
-  }).items as unknown as ExternalEventSubscription[]
-  const eventTypes = externalEventSubscriptions.map(
-    (sub) => sub.config?.type as string,
-  )
-  const [syncPanelTab, setSyncPanelTab] = useState(0)
-  const [pullingUpdates, setPullingUpdates] = useState(false)
-  const [events, setEvents] = useState<ExternalEventLogRecord[]>([])
-  const themeData = useTheme()
+  const {
+    items: subscriptions,
+    refresh: refreshSubscriptions,
+    refreshing: refreshingSubscriptions,
+  } = useExternalEventSubscriptions({
+    connectionId: flowInstance.connectionId,
+  })
+  const { items: events, refresh: refreshEvents } = useExternalEventLogRecords({
+    connectionId: flowInstance.connectionId,
+  })
+  const [pullingUpdates, setPullingUpdates] = useState<string[]>([])
   const integrationApp = useIntegrationApp()
 
   async function pullUpdates(sub: ExternalEventSubscription) {
-    setPullingUpdates(true)
+    setPullingUpdates((state) => [...state, sub.id])
     await integrationApp.externalEventSubscription(sub.id).pullEvents()
-    setPullingUpdates(false)
+    await refreshSubscriptions()
+    await refreshEvents()
+    setPullingUpdates((state) => state.filter((i) => i !== sub.id))
   }
 
-  async function loadEvents() {
-    return await integrationApp.get(`/external-event-log-records`)
+  function pullUpdatesButton(sub: ExternalEventSubscription) {
+    if (sub.isRealTime || sub.status === 'error') return
+    const isPulling = pullingUpdates.includes(sub.id)
+    return (
+      <Button
+        variant='outline'
+        className='ml-4'
+        onClick={() => pullUpdates(sub)}
+        disabled={isPulling}
+      >
+        {isPulling ? 'Pulling Updates...' : 'Pull Updates Now'}
+      </Button>
+    )
   }
 
-  useEffect(() => {
-    loadEvents().then((data) => {
-      setEvents(data.items)
-    })
-  }, [])
+  function timeToNextUpdate(sub: ExternalEventSubscription) {
+    if (!sub.nextPullEventsTimestamp) return 0
+    const now = Date.now()
+    const delta = new Date(sub.nextPullEventsTimestamp).getTime() - now
+    return delta
+  }
+
+  useInterval(() => {
+    if (refreshingSubscriptions) return
+
+    const fetchSubscriptionsWithDueUpdates = async () => {
+      const now = Date.now()
+      const dueSubscriptions = subscriptions.filter(
+        (sub) => timeToNextUpdate(sub) < 0,
+      )
+
+      for (const sub of dueSubscriptions) {
+        await pullUpdates(sub)
+      }
+    }
+
+    fetchSubscriptionsWithDueUpdates()
+  }, 1000)
 
   return (
-    <div className='my-4'>
-      <Tabs value={eventTypes[syncPanelTab]} className='flex-container'>
-        <TabsList className='grid w-full grid-cols-3'>
-          {eventTypes.map((value, index) => (
-            <TabsTrigger
-              key={index}
-              value={value}
-              onClick={() => setSyncPanelTab(eventTypes.indexOf(value))}
-            >
-              {toSentenceCase(value)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {eventTypes.map((value, index) => (
-          <TabsContent key={index} value={value} tabIndex={-1}>
-            <Card className='px-6 py-4'>
-              {externalEventSubscriptions
-                .filter((sub) => sub.config?.type === value)
-                .map((sub, index) => (
-                  <div key={index}>
-                    {sub.isRealTime ? (
-                      <div className='py-2'>
-                        Receiving updates in real-time (it can take a few
-                        seconds to reflect in UI)
-                      </div>
-                    ) : sub.nextPullEventsTimestamp ? (
-                      `Next update pull scheduled ${formatDistanceToNow(
-                        sub.nextPullEventsTimestamp,
-                        { addSuffix: true },
-                      )}`
-                    ) : (
-                      <div>No scheduled updates</div>
+    <Card className='flex flex-col space-y-8 lg:flex-row lg:space-y-0 overflow-auto mb-4'>
+      <aside className='lg:w-2/5 bg-muted/50'>
+        {subscriptions.length === 0 ? (
+          <div className='p-6'>Loading...</div>
+        ) : (
+          <CardHeader className='mb-[-18px]'>
+            <CardTitle>Event Subscriptions</CardTitle>
+            <CardDescription>
+              It can take a few seconds to reflect any event in UI
+            </CardDescription>
+          </CardHeader>
+        )}
+        {subscriptions.map((sub) => (
+          <Card key={sub.id} className='m-4 p-2'>
+            <CardHeader className='py-2 px-4'>
+              <CardTitle className='text-md'>
+                {sub.config?.type && toSentenceCase(sub.config.type)}
+                {pullUpdatesButton(sub)}
+              </CardTitle>
+              {sub.isRealTime ? (
+                <div className='py-2'>
+                  <Webhook className='w-6 h-6 mr-2 inline' />
+                  Receiving updates in real-time
+                </div>
+              ) : sub.nextPullEventsTimestamp ? (
+                <div className='py-2'>
+                  <WebhookOff className='w-6 h-6 mr-2 inline' />
+                  Next update pull scheduled{' '}
+                  {formatDistanceToNow(sub.nextPullEventsTimestamp, {
+                    addSuffix: true,
+                    includeSeconds: true,
+                  })}
+                  {sub.pullUpdatesIntervalSeconds &&
+                    sub.fullSyncIntervalSeconds && (
+                      <Progress
+                        className='mt-4 h-1 b-0'
+                        value={
+                          (timeToNextUpdate(sub) /
+                            1000 /
+                            (sub.requiresFullSync === true
+                              ? sub.fullSyncIntervalSeconds
+                              : sub.pullUpdatesIntervalSeconds)) *
+                          100
+                        }
+                      ></Progress>
                     )}
-                    {!sub.isRealTime && sub.status !== 'error' && (
-                      <Button
-                        variant='outline'
-                        className='ml-4'
-                        onClick={() => pullUpdates(sub)}
-                        disabled={pullingUpdates}
-                      >
-                        Pull Updates Now
-                      </Button>
-                    )}
-                    {sub.status === 'error' && (
-                      <div
-                        className='bg-red-100 dark:bg-red-950 border border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded relative'
-                        role='alert'
-                      >
-                        <strong className='font-bold'>
-                          Subscription doesn&apos;t work
-                        </strong>
-                        <div>{JSON.stringify(sub.error, null, 2)}</div>
-                      </div>
-                    )}
-                    {events?.filter((e) => {
-                      return e.externalEventSubscriptionId === sub.id
-                    }).length > 0 && (
-                      <Table className='min-w-full leading-normal'>
-                        <TableHeader>
-                          <TableRow>
-                            <TableCell>Event ID</TableCell>
-                            <TableCell>Details</TableCell>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {events
-                            .filter((e) => {
-                              return e.externalEventSubscriptionId === sub.id
-                            })
-                            .map((item, index) => {
-                              return (
-                                <TableRow key={index}>
-                                  <TableCell>{item.id}</TableCell>
-                                  <TableCell>
-                                    <div className='overflow-auto max-h-80'>
-                                      <ReactJson
-                                        src={item.payload}
-                                        name={false}
-                                        collapsed={1}
-                                        quotesOnKeys={false}
-                                        enableClipboard={false}
-                                        displayDataTypes={false}
-                                        displayObjectSize={false}
-                                        iconStyle='square'
-                                        style={{
-                                          padding: 8,
-                                          backgroundColor: 'transparent',
-                                        }}
-                                        theme={
-                                          themeData.resolvedTheme === 'light'
-                                            ? 'rjv-default'
-                                            : 'harmonic'
-                                        }
-                                      />
-                                    </div>
-                                  </TableCell>
-                                </TableRow>
-                              )
-                            })}
-                        </TableBody>
-                      </Table>
-                    )}
-                  </div>
-                ))}
-            </Card>
-          </TabsContent>
+                </div>
+              ) : (
+                <div>No scheduled updates</div>
+              )}
+            </CardHeader>
+            {sub.status === 'error' && (
+              <div
+                className='bg-red-100 dark:bg-red-950 border border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded relative'
+                role='alert'
+              >
+                <strong className='font-bold'>
+                  Subscription doesn&apos;t work
+                </strong>
+                <div>{JSON.stringify(sub.error, null, 2)}</div>
+              </div>
+            )}
+          </Card>
         ))}
-      </Tabs>
-    </div>
+      </aside>
+      <div className='flex-1 lg:w-3/5 overflow-auto max-h-[640px]'>
+        {events?.length > 0 ? (
+          <ExternalSyncEventsTable events={events} />
+        ) : (
+          <div className='p-4 text-sm'>Events will appear here</div>
+        )}
+      </div>
+    </Card>
   )
 }
